@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daftar Akun - SIAKAD</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #0f172a;
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(37, 99, 235, 0.15) 0, transparent 50%), 
+                radial-gradient(at 100% 100%, rgba(37, 99, 235, 0.1) 0, transparent 50%);
+            margin: 0;
+            padding: 2rem 1rem;
+        }
+        
+        .register-container {
+            width: 100%;
+            max-width: 500px;
+            z-index: 10;
+            animation: slideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .register-card {
+            background: rgba(255, 255, 255, 0.98);
+            border-radius: var(--radius-xl);
+            padding: 2.5rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .header i {
+            font-size: 2.5rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+            display: inline-block;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .header h1 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            color: var(--bg-sidebar);
+        }
+
+        .btn-register {
+            width: 100%;
+            padding: 0.875rem;
+            font-size: 1rem;
+            margin-top: 1rem;
+            justify-content: center;
+        }
+
+        .auth-footer {
+            margin-top: 1.5rem;
+            text-align: center;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .auth-footer a {
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        /* Form Grid */
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+        .full-width { grid-column: span 2; }
+
+        @media (max-width: 480px) {
+            .form-grid { grid-template-columns: 1fr; }
+            .full-width { grid-column: span 1; }
+        }
+    </style>
+</head>
+<body>
+    <div class="register-container">
+        <div class="register-card">
+            <div class="header">
+                <i class="fas fa-user-plus"></i>
+                <h1>Buat Akun Baru</h1>
+                <p class="text-muted">Lengkapi data diri untuk bergabung</p>
+            </div>
+
+            <form action="{{ url_for('main.register') }}" method="POST">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label">NIM</label>
+                        <input type="text" name="nim" class="form-control" placeholder="123456789" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Nama Lengkap</label>
+                        <input type="text" name="nama" class="form-control" placeholder="Nama Anda" required>
+                    </div>
+                    <div class="form-group full-width">
+                        <label class="form-label">Email Kampus</label>
+                        <input type="email" name="email" class="form-control" placeholder="nama@mahasiswa.ac.id" required>
+                    </div>
+                    <div class="form-group full-width">
+                        <label class="form-label">Program Studi</label>
+                        <select name="program_studi" class="form-control" required>
+                            <option value="">Pilih Program Studi</option>
+                            <option value="informatika">Informatika</option>
+                            <option value="sistem_informasi">Sistem Informasi</option>
+                            <option value="teknik_komputer">Teknik Komputer</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Kata Sandi</label>
+                        <input type="password" id="password" name="password" class="form-control" placeholder="••••••••" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Konfirmasi</label>
+                        <input type="password" id="confirm_password" name="confirm_password" class="form-control" placeholder="••••••••" required>
+                    </div>
+                </div>
+
+                <label class="flex items-center gap-2 mb-4" style="font-size: 0.8rem; cursor: pointer;">
+                    <input type="checkbox" name="agree" required style="width: 14px; height: 14px;"> Saya setuju dengan Syarat & Ketentuan.
+                </label>
+
+                <button type="submit" class="btn-modern btn-primary btn-register">
+                    Daftar Sekarang <i class="fas fa-paper-plane" style="font-size: 0.8rem; margin-left: 0.5rem;"></i>
+                </button>
+            </form>
+
+            <div class="auth-footer">
+                Sudah memiliki akun? <a href="{{ url_for('main.login') }}">Masuk di sini</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const form = document.querySelector('form');
+        const btn = document.querySelector('.btn-register');
+        const pass = document.getElementById('password');
+        const confirm = document.getElementById('confirm_password');
+
+        form.addEventListener('submit', (e) => {
+            if (pass.value !== confirm.value) {
+                e.preventDefault();
+                alert('Kata sandi tidak cocok!');
+                return;
+            }
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Memproses...';
+        });
+    </script>
+</body>
+</html>

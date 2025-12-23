@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block title %}Pengaturan - SIAKAD Modern{% endblock %}
+
+{% block page_title %}Konfigurasi Sistem Global{% endblock %}
+
+{% block content %}
+<div class="animate-fade-in">
+    <div style="max-width: 800px; margin: 0 auto;">
+        <div class="card-modern">
+            <div class="card-header">
+                <h4 style="margin: 0;"><i class="fas fa-cogs" style="margin-right: 10px; color: var(--primary);"></i> Pengaturan Core SIAKAD</h4>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('admin.settings') }}">
+                    <div class="form-group mb-4">
+                        <label class="form-label">Nama Platform / Universitas</label>
+                        <input type="text" name="system_name" class="form-control" value="{{ settings.system_name }}" required>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 2rem;">
+                        <div class="form-group">
+                            <label class="form-label">Limit Upload File (MB)</label>
+                            <input type="number" name="max_file_size" class="form-control" value="{{ settings.max_file_size }}" min="1" max="100" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Frekuensi Pencadangan (Backup)</label>
+                            <select name="backup_frequency" class="form-control" required>
+                                <option value="daily" {% if settings.backup_frequency == 'daily' %}selected{% endif %}>Harian (Otomatis)</option>
+                                <option value="weekly" {% if settings.backup_frequency == 'weekly' %}selected{% endif %}>Mingguan (Terjadwal)</option>
+                                <option value="monthly" {% if settings.backup_frequency == 'monthly' %}selected{% endif %}>Bulanan (Arsip)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div style="background: rgba(37, 99, 235, 0.05); padding: 1.5rem; border-radius: var(--radius-md); border-left: 4px solid var(--primary); margin-bottom: 2rem;">
+                        <h5 style="margin: 0 0 10px; font-family: 'Outfit'; color: var(--primary);">System Health Status</h5>
+                        <div class="flex flex-direction-column gap-2">
+                            <div class="flex justify-between" style="font-size: 0.85rem;">
+                                <span>Database Connection</span>
+                                <span style="color: var(--success); font-weight: 700;">OK</span>
+                            </div>
+                            <div class="flex justify-between" style="font-size: 0.85rem;">
+                                <span>Storage Availability</span>
+                                <span style="color: var(--success); font-weight: 700;">92% Free</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex justify-end gap-3 pt-4" style="border-top: 1px solid var(--border-light);">
+                        <a href="{{ url_for('admin.dashboard') }}" class="btn-modern" style="border: 1px solid var(--border-light);">Batal</a>
+                        <button type="submit" class="btn-modern btn-primary">
+                            <i class="fas fa-save"></i> Terapkan Perubahan
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block title %}Ajukan Surat - SIAKAD Modern{% endblock %}
+
+{% block page_title %}Pengajuan Surat Keterangan{% endblock %}
+
+{% block content %}
+<div class="animate-fade-in">
+    <div style="max-width: 800px; margin: 0 auto;">
+        <div class="card-modern">
+            <div class="card-header">
+                <h4 style="margin: 0;"><i class="fas fa-file-signature" style="margin-right: 10px; color: var(--primary);"></i> Form Pengajuan Akademik</h4>
+            </div>
+            <div class="card-body">
+                <form action="{{ url_for('pengajuan.ajukan_surat') }}" method="POST">
+                    <div class="form-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem;">
+                        <div class="form-group">
+                            <label class="form-label">Jenis Surat</label>
+                            <select class="form-control" name="letter_type" required>
+                                <option value="keterangan_aktif">Surat Keterangan Aktif Kuliah</option>
+                                <option value="transkrip_nilai">Transkrip Nilai Sementara</option>
+                                <option value="izin_penelitian">Surat Izin Penelitian</option>
+                                <option value="rekomendasi">Surat Rekomendasi Beasiswa</option>
+                                <option value="lainnya">Lainnya</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Prioritas</label>
+                            <select class="form-control" name="priority">
+                                <option value="normal">Normal (2-3 Hari Kerja)</option>
+                                <option value="urgent">Urgent (Sama Hari)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group mb-4">
+                        <label class="form-label">Judul / Perihal</label>
+                        <input type="text" class="form-control" name="title" placeholder="Contoh: Pengajuan Transkrip untuk Beasiswa Bank Indonesia" required>
+                    </div>
+
+                    <div class="form-group mb-4">
+                        <label class="form-label">Alasan / Deskripsi Detail</label>
+                        <textarea class="form-control" name="description" rows="6" placeholder="Jelaskan secara detail keperluan surat ini..." required></textarea>
+                    </div>
+
+                    <div style="background: rgba(37, 99, 235, 0.05); padding: 1.5rem; border-radius: var(--radius-md); border-left: 4px solid var(--primary); margin-bottom: 2rem;">
+                        <h5 style="margin: 0 0 10px; color: var(--primary); font-family: 'Outfit';">Informasi Penting</h5>
+                        <ul style="margin: 0; padding-left: 1.25rem; font-size: 0.85rem; color: var(--text-muted); line-height: 1.6;">
+                            <li>Pastikan data profil Anda sudah lengkap dan benar sebelum mengajukan.</li>
+                            <li>Proses verifikasi memakan waktu minimal 24 jam di hari kerja.</li>
+                            <li>Surat yang telah disetujui dapat diambil di Biro Akademik atau diunduh via sistem.</li>
+                        </ul>
+                    </div>
+
+                    <div class="flex justify-end gap-3">
+                        <a href="{{ url_for('pengajuan.status_pengajuan') }}" class="btn-modern" style="border: 1px solid var(--border-light);">Batal</a>
+                        <button type="submit" class="btn-modern btn-primary">
+                            <i class="fas fa-paper-plane"></i> Kirim Pengajuan
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

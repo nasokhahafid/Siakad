@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+
+{% block title %}Progress Belajar - SIAKAD{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <h1 class="h3 mb-4 text-gray-800">Progress Belajar</h1>
+
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Grafik Progress Belajar</h6>
+        </div>
+        <div class="card-body">
+            <div class="chart-area">
+                <canvas id="progressChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Detail Progress per Mata Kuliah</h6>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>Mata Kuliah</th>
+                            <th>Progress</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in progress_data %}
+                        <tr>
+                            <td>{{ item.nama }}</td>
+                            <td>
+                                <div class="progress">
+                                    <div class="progress-bar" role="progressbar" style="width: {{ item.progress }}%;" aria-valuenow="{{ item.progress }}" aria-valuemin="0" aria-valuemax="100">{{ item.progress }}%</div>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        var ctx = document.getElementById('progressChart').getContext('2d');
+        var progressChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: {{ chart_data.labels | tojson }},
+                datasets: [{
+                    label: '{{ chart_data.datasets[0].label }}',
+                    data: {{ chart_data.datasets[0].data | tojson }},
+                    backgroundColor: '{{ chart_data.datasets[0].backgroundColor }}',
+                    borderColor: '{{ chart_data.datasets[0].borderColor }}',
+                    borderWidth: {{ chart_data.datasets[0].borderWidth }}
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 100
+                    }
+                }
+            }
+        });
+    });
+</script>
+{% endblock %}

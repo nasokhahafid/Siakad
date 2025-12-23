@@ -1,0 +1,151 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard Dosen - SIAKAD Modern{% endblock %}
+
+{% block page_title %}Dashboard Pengajar{% endblock %}
+
+{% block content %}
+<div class="animate-fade-in" style="display: flex; flex-direction: column; gap: 2rem;">
+    <!-- Hero Section -->
+    <div class="card-modern" style="background: linear-gradient(135deg, #1e293b, #0f172a); color: white; border: none; overflow: hidden; position: relative; min-height: 200px; display: flex; align-items: center; padding: 0;">
+        <div style="position: absolute; right: -50px; top: -50px; width: 300px; height: 300px; background: rgba(37, 99, 235, 0.2); border-radius: 50%; filter: blur(60px); z-index: 1;"></div>
+        <div style="position: absolute; left: 10%; bottom: -20px; width: 150px; height: 150px; background: rgba(16, 185, 129, 0.1); border-radius: 50%; filter: blur(40px); z-index: 1;"></div>
+        
+        <div class="card-body" style="z-index: 2; width: 100%; display: flex; justify-content: space-between; align-items: center; padding: 2.5rem 3rem;">
+            <div style="display: flex; gap: 2rem; align-items: center;">
+                <div style="width: 100px; height: 100px; border-radius: 50%; background: rgba(255,255,255,0.1); backdrop-filter: blur(10px); border: 2px solid rgba(255,255,255,0.2); display: flex; align-items: center; justify-content: center; font-size: 3rem;">
+                    <i class="fas fa-chalkboard-teacher"></i>
+                </div>
+                <div>
+                    <h2 style="margin-bottom: 0.5rem; font-size: 2rem; font-weight: 800;">Dr. {{ current_user.nama }}</h2>
+                    <p style="opacity: 0.8; font-size: 1.1rem; margin: 0;">{{ current_user.program_studi }} • <span style="background: rgba(16, 185, 129, 0.2); padding: 4px 12px; border-radius: 20px; font-size: 0.85rem; font-weight: 600; color: #4ade80; border: 1px solid rgba(16, 185, 129, 0.3);">Dosen Pembimbing</span></p>
+                </div>
+            </div>
+            <div style="text-align: right; display: flex; gap: 2rem;">
+                <div style="text-align: center;">
+                    <span style="display: block; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.5rem; opacity: 0.6;">Mata Kuliah</span>
+                    <div style="font-size: 2rem; font-weight: 800;">{{ courses|length }}</div>
+                </div>
+                <div style="width: 1px; background: rgba(255,255,255,0.1); height: 50px; align-self: center;"></div>
+                <div style="text-align: center;">
+                    <span style="display: block; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.5rem; opacity: 0.6;">Total Siswa</span>
+                    <div style="font-size: 2rem; font-weight: 800;">{{ total_students_count }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Insights -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem;">
+        <div class="card-modern" style="display: flex; align-items: center; gap: 1.5rem; padding: 1.5rem;">
+            <div style="width: 60px; height: 60px; border-radius: 16px; background: rgba(37, 99, 235, 0.1); color: var(--primary); display: flex; align-items: center; justify-content: center; font-size: 1.5rem;">
+                <i class="fas fa-file-signature"></i>
+            </div>
+            <div>
+                <span class="text-muted" style="font-size: 0.85rem; font-weight: 600; display: block;">Tugas Masuk</span>
+                <span style="font-size: 1.75rem; font-weight: 800; color: #1e293b;">{{ new_submissions_count }}</span>
+                <small style="display: block; color: var(--warning); font-weight: 700; margin-top: 2px;">Butuh Penilaian</small>
+            </div>
+        </div>
+        <div class="card-modern" style="display: flex; align-items: center; gap: 1.5rem; padding: 1.5rem;">
+            <div style="width: 60px; height: 60px; border-radius: 16px; background: rgba(16, 185, 129, 0.1); color: var(--success); display: flex; align-items: center; justify-content: center; font-size: 1.5rem;">
+                <i class="fas fa-calendar-day"></i>
+            </div>
+            <div>
+                <span class="text-muted" style="font-size: 0.85rem; font-weight: 600; display: block;">Jadwal Hari Ini</span>
+                <span style="font-size: 1.75rem; font-weight: 800; color: #1e293b;">{{ teaching_schedule|length }}</span>
+                <small style="display: block; color: var(--success); font-weight: 700; margin-top: 2px;">Sesi Aktif</small>
+            </div>
+        </div>
+        <div class="card-modern" style="display: flex; align-items: center; gap: 1.5rem; padding: 1.5rem;">
+            <div style="width: 60px; height: 60px; border-radius: 16px; background: rgba(245, 158, 11, 0.1); color: var(--warning); display: flex; align-items: center; justify-content: center; font-size: 1.5rem;">
+                <i class="fas fa-star"></i>
+            </div>
+            <div>
+                <span class="text-muted" style="font-size: 0.85rem; font-weight: 600; display: block;">Rating Kinerja</span>
+                <span style="font-size: 1.75rem; font-weight: 800; color: #1e293b;">4.8</span>
+                <small style="display: block; color: var(--text-muted); font-weight: 600; margin-top: 2px;">Skala 5.0</small>
+            </div>
+        </div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 1.5rem;">
+        <!-- Course Management Grid -->
+        <div>
+            <div class="flex justify-between items-center mb-4">
+                <h4 style="margin: 0; font-weight: 800; color: #1e293b;">Manajemen Mata Kuliah</h4>
+                <a href="{{ url_for('elearning.materi') }}" style="font-size: 0.85rem; color: var(--primary); font-weight: 700;">Kelola Semua <i class="fas fa-chevron-right ml-1"></i></a>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                {% for course in course_stats %}
+                <div class="card-modern" style="padding: 1.5rem; display: flex; flex-direction: column; justify-content: space-between; transition: transform 0.2s; cursor: pointer;">
+                    <div>
+                        <div class="flex justify-between items-start mb-3">
+                            <span style="background: rgba(37, 99, 235, 0.1); color: var(--primary); padding: 4px 10px; border-radius: 8px; font-weight: 800; font-size: 0.7rem;">{{ course.kode }}</span>
+                            <div style="display: flex; gap: 4px;">
+                                <div style="width: 6px; height: 6px; border-radius: 50%; background: var(--success);"></div>
+                                <div style="width: 6px; height: 6px; border-radius: 50%; background: var(--success);"></div>
+                            </div>
+                        </div>
+                        <h5 style="margin-bottom: 0.5rem; line-height: 1.4; font-weight: 700;">{{ course.nama }}</h5>
+                        <p class="text-muted" style="font-size: 0.8rem; margin-bottom: 1.5rem;">{{ course.sks }} SKS • <strong>{{ course.student_count }}</strong> Mahasiswa</p>
+                    </div>
+                    <div class="flex gap-2">
+                        <a href="{{ url_for('elearning.materi') }}" class="btn-modern" style="flex: 1; padding: 0.5rem; font-size: 0.75rem; justify-content: center; border: 1px solid var(--border-light);"><i class="fas fa-folder-open mr-2"></i> E-Learning</a>
+                        <a href="{{ url_for('main.dosen_submissions') }}" class="btn-modern btn-primary" style="flex: 1; padding: 0.5rem; font-size: 0.75rem; justify-content: center;"><i class="fas fa-check-double mr-2"></i> Nilai</a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Sidebar Activity/Schedule -->
+        <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+            <div class="card-modern" style="padding: 0; overflow: hidden;">
+                <div class="card-header" style="background: #fafafa; border-bottom: 1px solid var(--border-light);">
+                    <h5 style="margin: 0; font-weight: 800;"><i class="fas fa-clock mr-2" style="color: var(--primary);"></i> Sesi Mengajar</h5>
+                </div>
+                <div class="card-body" style="padding: 0;">
+                    {% for sched in teaching_schedule %}
+                    <div style="padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--border-light); position: relative;">
+                        <div style="position: absolute; left: 0; top: 1.25rem; bottom: 1.25rem; width: 4px; background: var(--primary); border-radius: 0 4px 4px 0;"></div>
+                        <small class="text-muted" style="display: block; font-weight: 800; text-transform: uppercase; font-size: 0.7rem; margin-bottom: 0.25rem;">{{ sched.waktu_mulai }} - {{ sched.waktu_selesai }}</small>
+                        <span style="display: block; font-weight: 700; color: #1e293b;">{{ sched.course.nama }}</span>
+                        <small style="color: var(--text-muted); font-weight: 500;">Ruang: <span style="color: var(--primary);">{{ sched.ruangan }}</span></small>
+                    </div>
+                    {% else %}
+                    <div style="padding: 3rem 1.5rem; text-align: center;">
+                        <i class="fas fa-calendar-alt" style="font-size: 2rem; color: #ddd; margin-bottom: 1rem; display: block;"></i>
+                        <p style="color: var(--text-muted); font-size: 0.85rem; margin: 0;">Tidak ada jadwal mengajar hari ini.</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="card-modern" style="padding: 0;">
+                <div class="card-header" style="background: #fafafa; border-bottom: 1px solid var(--border-light);">
+                    <h5 style="margin: 0; font-weight: 800;"><i class="fas fa-bell mr-2" style="color: var(--danger);"></i> Perlu Dinilai</h5>
+                </div>
+                <div class="card-body" style="padding: 1.5rem;">
+                    {% for submission in pending_submissions %}
+                    <div style="padding: 1rem; background: #fff; border: 1px solid var(--border-light); border-radius: 12px; margin-bottom: 0.75rem; display: flex; align-items: start; gap: 1rem;">
+                        <div style="width: 32px; height: 32px; border-radius: 50%; background: #eee; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.7rem;">
+                            {{ (submission.student.nama[0] if submission.student else '?') | upper }}
+                        </div>
+                        <div style="flex: 1; min-width: 0;">
+                            <span style="display: block; font-size: 0.85rem; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ submission.judul }}</span>
+                            <small class="text-muted" style="display: block; font-size: 0.75rem;">{{ submission.student.nama }}</small>
+                        </div>
+                        <a href="{{ url_for('main.dosen_submissions') }}" style="color: var(--primary);"><i class="fas fa-chevron-right"></i></a>
+                    </div>
+                    {% else %}
+                    <div style="text-align: center; padding: 2rem 1rem;">
+                        <p style="color: var(--text-muted); font-size: 0.85rem; margin: 0;">Kerjaan Anda beres!</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

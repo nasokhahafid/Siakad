@@ -1,0 +1,205 @@
+{% extends "base.html" %}
+
+{% block title %}Profil Mahasiswa - SIAKAD Modern{% endblock %}
+
+{% block page_title %}Profil Saya{% endblock %}
+
+{% block content %}
+<div class="animate-fade-in">
+    <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 1.5rem;">
+        <!-- Left Column: Profile Card -->
+        <div>
+            <div class="card-modern mb-4">
+                <div style="padding: 2.5rem 1.5rem; text-align: center; background: linear-gradient(135deg, var(--bg-sidebar), var(--primary-dark)); color: white;">
+                    <div style="width: 100px; height: 100px; border-radius: 50%; background: white; margin: 0 auto 1.5rem; display: flex; align-items: center; justify-content: center; overflow: hidden; border: 4px solid rgba(255,255,255,0.2);">
+                        <i class="fas fa-user-graduate" style="font-size: 3rem; color: var(--primary);"></i>
+                    </div>
+                    <h3 style="color: white; margin-bottom: 0.5rem; font-family: 'Outfit';">{{ current_user.nama }}</h3>
+                    <p style="opacity: 0.8; font-size: 0.9rem; margin-bottom: 1.5rem;">Mahasiswa Aktif • Angkatan 2021</p>
+                    <button class="btn-modern btn-primary" onclick="showEditProfileModal()" style="background: rgba(255,255,255,0.15); backdrop-filter: blur(5px); width: 100%; justify-content: center;">
+                        <i class="fas fa-edit"></i> Edit Profil
+                    </button>
+                </div>
+                <div class="card-body">
+                    <div style="display: flex; flex-direction: column; gap: 1.25rem;">
+                        <div class="flex items-center gap-3">
+                            <i class="fas fa-id-card" style="width: 20px; color: var(--primary);"></i>
+                            <div>
+                                <small class="text-muted" style="display: block; font-size: 0.75rem;">NIM</small>
+                                <span style="font-weight: 600;">{{ current_user.nim }}</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <i class="fas fa-envelope" style="width: 20px; color: var(--primary);"></i>
+                            <div>
+                                <small class="text-muted" style="display: block; font-size: 0.75rem;">Email Kampus</small>
+                                <span style="font-weight: 600;">{{ current_user.email or 'fauzi@kampus.ac.id' }}</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <i class="fas fa-phone" style="width: 20px; color: var(--primary);"></i>
+                            <div>
+                                <small class="text-muted" style="display: block; font-size: 0.75rem;">Telepon</small>
+                                <span style="font-weight: 600;">+62 812 3456 7890</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-modern">
+                <div class="card-header">
+                    <h4 style="margin: 0;">Keamanan</h4>
+                </div>
+                <div class="card-body">
+                    <button class="btn-modern" style="width: 100%; border: 1px solid var(--border-light); justify-content: center; font-size: 0.85rem;">
+                        <i class="fas fa-key"></i> Ubah Kata Sandi
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Column: Details & Stats -->
+        <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+            <!-- Academic Info -->
+            <div class="card-modern">
+                <div class="card-header">
+                    <h4 style="margin: 0;"><i class="fas fa-university" style="margin-right: 10px; color: var(--primary);"></i> Informasi Akademik</h4>
+                </div>
+                <div class="card-body">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+                        <div>
+                            <label class="text-muted" style="font-size: 0.8rem; font-weight: 600; text-transform: uppercase;">Program Studi</label>
+                            <p style="font-size: 1.1rem; font-weight: 600; margin-top: 0.25rem;">{{ current_user.program_studi or 'Teknik Informatika' }}</p>
+                        </div>
+                        <div>
+                            <label class="text-muted" style="font-size: 0.8rem; font-weight: 600; text-transform: uppercase;">Jenjang Pendidikan</label>
+                            <p style="font-size: 1.1rem; font-weight: 600; margin-top: 0.25rem;">Sarjana (S1)</p>
+                        </div>
+                        <div>
+                            <label class="text-muted" style="font-size: 0.8rem; font-weight: 600; text-transform: uppercase;">Semester</label>
+                            <p style="font-size: 1.1rem; font-weight: 600; margin-top: 0.25rem;">Semester {{ (history|first).semester if history else 1 }}</p>
+                        </div>
+                        <div>
+                            <label class="text-muted" style="font-size: 0.8rem; font-weight: 600; text-transform: uppercase;">Dosen Wali</label>
+                            <p style="font-size: 1.1rem; font-weight: 600; margin-top: 0.25rem;">{{ current_user.advisor.nama if current_user.advisor else 'Belum ditentukan' }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stats & Progress -->
+            <div class="stats-grid">
+                <div class="card-modern stat-card">
+                    <div class="stat-icon" style="background: rgba(37, 99, 235, 0.1); color: var(--primary);">
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <div class="stat-info">
+                        <span class="stat-value">{{ ipk }}</span>
+                        <span class="stat-label">IPK Kumulatif</span>
+                    </div>
+                </div>
+                <div class="card-modern stat-card">
+                    <div class="stat-icon" style="background: rgba(16, 185, 129, 0.1); color: var(--success);">
+                        <i class="fas fa-check-double"></i>
+                    </div>
+                    <div class="stat-info">
+                        <span class="stat-value">{{ total_sks }}</span>
+                        <span class="stat-label">SKS Lulus</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Academic History Timeline -->
+            <div class="card-modern">
+                <div class="card-header">
+                    <h4 style="margin: 0;"><i class="fas fa-history" style="margin-right: 10px; color: var(--primary);"></i> Riwayat Semester</h4>
+                </div>
+                <div class="card-body">
+                    <div style="display: flex; flex-direction: column; gap: 1rem;">
+                        {% for item in history %}
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 1rem; background: var(--bg-main); border-radius: var(--radius-md);">
+                            <div>
+                                <span style="font-weight: 700;">Semester {{ item.semester }}</span>
+                                <small class="text-muted" style="display: block;">Lulus • {{ item.sks }} SKS</small>
+                            </div>
+                            <div style="text-align: right;">
+                                <span style="font-weight: 700; color: var(--primary);">IP: {{ item.ip }}</span>
+                            </div>
+                        </div>
+                        {% else %}
+                        <p class="text-center text-muted">Belum ada riwayat akademik.</p>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Edit Profil (Hidden Initially) -->
+<div id="editProfileModal" class="modal-overlay" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); z-index: 2000; align-items: center; justify-content: center; padding: 1rem;">
+    <div class="card-modern animate-fade-in" style="width: 100%; max-width: 500px;">
+        <div class="card-header">
+            <h4 style="margin: 0;">Edit Data Profil</h4>
+            <button onclick="closeEditModal()" style="background: transparent; border: none; font-size: 1.2rem; cursor: pointer;"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="card-body">
+            <form id="editProfileForm">
+                <div class="form-group">
+                    <label class="form-label">Nama Lengkap</label>
+                    <input type="text" name="nama" value="{{ current_user.nama }}" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Email</label>
+                    <input type="email" name="email" value="{{ current_user.email }}" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Program Studi</label>
+                    <select name="program_studi" class="form-control">
+                        <option value="Teknik Informatika" {% if current_user.program_studi == 'Teknik Informatika' %}selected{% endif %}>Teknik Informatika</option>
+                        <option value="Sistem Informasi" {% if current_user.program_studi == 'Sistem Informasi' %}selected{% endif %}>Sistem Informasi</option>
+                        <option value="Teknik Elektro" {% if current_user.program_studi == 'Teknik Elektro' %}selected{% endif %}>Teknik Elektro</option>
+                    </select>
+                </div>
+                <div class="flex justify-end gap-2 mt-4">
+                    <button type="button" class="btn-modern" onclick="closeEditModal()" style="border: 1px solid var(--border-light);">Batal</button>
+                    <button type="submit" class="btn-modern btn-primary">Simpan Perubahan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    function showEditProfileModal() {
+        document.getElementById('editProfileModal').style.display = 'flex';
+    }
+
+    function closeEditModal() {
+        document.getElementById('editProfileModal').style.display = 'none';
+    }
+
+    document.getElementById('editProfileForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const formData = new FormData(this);
+        const data = Object.fromEntries(formData.entries());
+
+        fetch('/akademik/profil/update', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data)
+        })
+        .then(response => response.json())
+        .then(res => {
+            if (res.status === 'success') {
+                location.reload();
+            } else {
+                alert('Gagal memperbarui profil: ' + res.message);
+            }
+        });
+    });
+</script>
+{% endblock %}

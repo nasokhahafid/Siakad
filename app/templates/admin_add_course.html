@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+
+{% block title %}Tambah Matkul - SIAKAD Modern{% endblock %}
+
+{% block page_title %}Manajemen Kurikulum{% endblock %}
+
+{% block content %}
+<div class="animate-fade-in">
+    <div style="max-width: 900px; margin: 0 auto;">
+        <div class="card-modern">
+            <div class="card-header">
+                <h4 style="margin: 0;"><i class="fas fa-plus-square" style="margin-right: 10px; color: var(--success);"></i> Tambah Mata Kuliah Baru</h4>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('admin.add_course') }}">
+                    <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 1.5rem; margin-bottom: 1.5rem;">
+                        <div class="form-group">
+                            <label class="form-label">Kode MK</label>
+                            <input type="text" name="kode" class="form-control" placeholder="Contoh: IF101" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Nama Mata Kuliah</label>
+                            <input type="text" name="nama" class="form-control" placeholder="Nama mata kuliah lengkap" required>
+                        </div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem;">
+                        <div class="form-group">
+                            <label class="form-label">Beban SKS</label>
+                            <input type="number" name="sks" class="form-control" min="1" max="6" value="3" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Semester</label>
+                            <select name="semester" class="form-control" required>
+                                {% for i in range(1, 9) %}
+                                <option value="{{ i }}">Semester {{ i }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group mb-4">
+                        <label class="form-label">Dosen Pengampu</label>
+                        <select name="dosen_nim" class="form-control" required>
+                            <option value="">Pilih Dosen Pengampu...</option>
+                            {% for lecturer in lecturers %}
+                            <option value="{{ lecturer.nim }}">{{ lecturer.nama }} ({{ lecturer.nim }})</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div style="background: rgba(16, 185, 129, 0.05); padding: 1.5rem; border-radius: var(--radius-md); border-left: 4px solid var(--success); margin-bottom: 2rem;">
+                        <p style="margin: 0; font-size: 0.85rem; color: var(--text-muted); line-height: 1.6;">
+                            <i class="fas fa-info-circle" style="color: var(--success); margin-right: 8px;"></i>
+                            Penambahan mata kuliah akan otomatis muncul di daftar KRS mahasiswa sesuai dengan semester yang dipilih. Pastikan kode MK unik dan belum pernah digunakan.
+                        </p>
+                    </div>
+
+                    <div class="flex justify-end gap-3 mt-5">
+                        <a href="{{ url_for('admin.dashboard') }}" class="btn-modern" style="border: 1px solid var(--border-light);">Batal</a>
+                        <button type="submit" class="btn-modern btn-primary">
+                            <i class="fas fa-plus"></i> Daftarkan Mata Kuliah
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

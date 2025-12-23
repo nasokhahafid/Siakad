@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+
+{% block title %}Upload Tugas - SIAKAD Modern{% endblock %}
+
+{% block page_title %}Unggah Tugas Kuliah{% endblock %}
+
+{% block content %}
+<div class="animate-fade-in">
+    <div style="max-width: 800px; margin: 0 auto;">
+        <div class="card-modern">
+            <div class="card-header">
+                <h4 style="margin: 0;"><i class="fas fa-cloud-upload-alt" style="margin-right: 10px; color: var(--primary);"></i> Pengumpulan Tugas Digital</h4>
+            </div>
+            <div class="card-body">
+                <form action="{{ url_for('pengajuan.upload_tugas') }}" method="POST" enctype="multipart/form-data">
+                    <div class="form-group mb-4">
+                        <label class="form-label">Mata Kuliah</label>
+                        <select class="form-control" name="course" required>
+                            {% for course in courses %}
+                                <option value="{{ course.id }}">{{ course.nama }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="form-group mb-4">
+                        <label class="form-label">Judul Tugas / Nama File</label>
+                        <input type="text" class="form-control" name="title" placeholder="Contoh: Tugas Mandiri PHP - Pertemuan 5" required>
+                    </div>
+
+                    <div class="form-group mb-4">
+                        <label class="form-label">Catatan Tambahan (Opsional)</label>
+                        <textarea class="form-control" name="description" rows="3" placeholder="Tambahkan catatan singkat untuk dosen jika ada..."></textarea>
+                    </div>
+
+                    <div class="form-group mb-4">
+                        <label class="form-label">File Tugas</label>
+                        <div style="border: 2px dashed var(--border-light); border-radius: var(--radius-lg); padding: 2.5rem; text-align: center; background: var(--bg-main); transition: var(--transition);" id="dropZone">
+                            <i class="fas fa-file-pdf" style="font-size: 2.5rem; color: var(--primary); margin-bottom: 1rem; opacity: 0.5;"></i>
+                            <p style="margin: 0; font-weight: 600; font-size: 0.95rem;">Klik untuk pilih file atau Drag & Drop</p>
+                            <p class="text-muted" style="margin: 5px 0 1.5rem; font-size: 0.8rem;">PDF, ZIP, DOCX (Max. 10MB)</p>
+                            <input type="file" name="file" id="fileInput" style="display: none;" required onchange="updateFileLabel()">
+                            <button type="button" class="btn-modern" onclick="document.getElementById('fileInput').click()" style="background: white; border: 1px solid var(--border-light); margin: 0 auto;">Pilih File</button>
+                            <p id="fileName" style="margin-top: 1rem; font-weight: 700; color: var(--success); display: none;"></p>
+                        </div>
+                    </div>
+
+                    <div class="flex justify-end gap-3 mt-5">
+                        <a href="{{ url_for('pengajuan.status_pengajuan') }}" class="btn-modern" style="border: 1px solid var(--border-light);">Batal</a>
+                        <button type="submit" class="btn-modern btn-primary">
+                            <i class="fas fa-check-circle"></i> Submit Tugas
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function updateFileLabel() {
+    const input = document.getElementById('fileInput');
+    const label = document.getElementById('fileName');
+    const dropZone = document.getElementById('dropZone');
+    
+    if (input.files.length > 0) {
+        label.textContent = "✓ File terpilih: " + input.files[0].name;
+        label.style.display = "block";
+        dropZone.style.borderColor = "var(--success)";
+        dropZone.style.background = "rgba(16, 185, 129, 0.05)";
+    }
+}
+
+// Drag & Drop visual effect
+const dz = document.getElementById('dropZone');
+dz.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    dz.style.borderColor = "var(--primary)";
+    dz.style.background = "rgba(37, 99, 235, 0.05)";
+});
+dz.addEventListener('dragleave', () => {
+    dz.style.borderColor = "var(--border-light)";
+    dz.style.background = "var(--bg-main)";
+});
+dz.addEventListener('drop', (e) => {
+    e.preventDefault();
+    const dt = e.dataTransfer;
+    const files = dt.files;
+    document.getElementById('fileInput').files = files;
+    updateFileLabel();
+});
+</script>
+{% endblock %}

@@ -1,0 +1,179 @@
+{% extends "base.html" %}
+
+{% block title %}Penilaian Tugas - SIAKAD Modern{% endblock %}
+
+{% block page_title %}Penilaian Tugas Mahasiswa{% endblock %}
+
+{% block content %}
+<div class="animate-fade-in">
+    <div class="card-modern">
+        <div class="card-header flex justify-between items-center">
+            <h4 style="margin: 0;"><i class="fas fa-tasks" style="margin-right: 10px; color: var(--primary);"></i> Daftar Pengumpulan Tugas</h4>
+            <div class="flex gap-2">
+                <select id="courseFilter" class="form-control" style="width: auto; padding: 0.5rem 1rem; font-size: 0.85rem;">
+                    <option value="all">Semua Mata Kuliah</option>
+                    {% for course in courses %}
+                    <option value="{{ course.id }}">{{ course.nama }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+        <div class="card-body" style="padding: 0;">
+            <div style="overflow-x: auto;">
+                <table style="width: 100%; border-collapse: collapse;">
+                    <thead>
+                        <tr style="background: var(--bg-main); border-bottom: 1px solid var(--border-light); text-align: left;">
+                            <th style="padding: 1rem 1.5rem; font-size: 0.8rem; text-transform: uppercase;">Mahasiswa</th>
+                            <th style="padding: 1rem 1.5rem; font-size: 0.8rem; text-transform: uppercase;">Mata Kuliah / Tugas</th>
+                            <th style="padding: 1rem 1.5rem; font-size: 0.8rem; text-transform: uppercase;">Tanggal Kirim</th>
+                            <th style="padding: 1rem 1.5rem; font-size: 0.8rem; text-transform: uppercase;">Status / Nilai</th>
+                            <th style="padding: 1rem 1.5rem; font-size: 0.8rem; text-transform: uppercase; text-align: center;">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for submission in submissions %}
+                        <tr style="border-bottom: 1px solid var(--border-light);" class="course-row" data-course-id="{{ submission.course_id }}">
+                            <td style="padding: 1.25rem 1.5rem;">
+                                <div class="flex items-center gap-3">
+                                    <div style="width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.8rem;">
+                                        {{ submission.student.nama[0] | upper }}
+                                    </div>
+                                    <div>
+                                        <span style="display: block; font-weight: 600; font-size: 0.9rem;">{{ submission.student.nama }}</span>
+                                        <small class="text-muted">{{ submission.student.nim }}</small>
+                                    </div>
+                                </div>
+                            </td>
+                            <td style="padding: 1.25rem 1.5rem;">
+                                <span style="display: block; font-weight: 600; font-size: 0.85rem;">{{ submission.judul }}</span>
+                                <small style="color: var(--primary); font-weight: 500;">{{ submission.course.nama }}</small>
+                            </td>
+                            <td style="padding: 1.25rem 1.5rem; font-size: 0.85rem; color: var(--text-muted);">
+                                {{ submission.submitted_at.strftime('%d %b %Y, %H:%M') }}
+                            </td>
+                            <td style="padding: 1.25rem 1.5rem;">
+                                {% if submission.status == 'graded' %}
+                                <div class="flex items-center gap-2">
+                                    <span class="badge-status approved">DINILAI</span>
+                                    <span style="font-weight: 800; color: var(--success); font-size: 1.1rem;">{{ submission.nilai | int }}</span>
+                                </div>
+                                {% else %}
+                                <span class="badge-status pending">MENUNGGU</span>
+                                {% endif %}
+                            </td>
+                            <td style="padding: 1.25rem 1.5rem; text-align: center;">
+                                <div class="flex justify-center gap-2">
+                                    <a href="{{ url_for('static', filename=submission.file_path) if submission.file_path else '#' }}" class="btn-icon" target="_blank" title="Download File">
+                                        <i class="fas fa-download"></i>
+                                    </a>
+                                    <button 
+                                        class="btn-icon open-grading" 
+                                        style="background: rgba(16, 185, 129, 0.1); color: var(--success);" 
+                                        title="Beri Nilai"
+                                        data-id="{{ submission.id }}"
+                                        data-name="{{ submission.student.nama }}"
+                                        data-task="{{ submission.judul }}"
+                                        data-grade="{{ submission.nilai or '' }}"
+                                        data-comment="{{ submission.komentar or '' }}">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="5" style="padding: 4rem; text-align: center; color: var(--text-muted);">
+                                <i class="fas fa-inbox" style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.2; display: block;"></i>
+                                Tidak ada tugas mahasiswa yang perlu dinilai.
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Penilaian -->
+<div id="gradingModal" class="modal-overlay" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); z-index: 2000; align-items: center; justify-content: center; padding: 1rem;">
+    <div class="card-modern animate-fade-in" style="max-width: 500px; width: 100%; padding: 0;">
+        <div class="card-header flex justify-between items-center">
+            <h4 style="margin: 0;">Form Penilaian</h4>
+            <button onclick="closeGradingModal()" style="background: transparent; border: none; font-size: 1.2rem; cursor: pointer;"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="card-body">
+            <p style="font-size: 0.9rem; margin-bottom: 1.5rem;">Memberikan nilai untuk <strong><span id="modalStudentName"></span></strong> pada tugas <strong><span id="modalTaskTitle"></span></strong>.</p>
+            <form id="gradingForm">
+                <input type="hidden" id="submissionId">
+                <div class="form-group">
+                    <label class="form-label">Nilai (0-100)</label>
+                    <input type="number" id="gradeValue" class="form-control" min="0" max="100" required placeholder="Contoh: 85">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Feedback / Komentar</label>
+                    <textarea id="gradeComment" class="form-control" rows="3" placeholder="Berikan komentar untuk mahasiswa..."></textarea>
+                </div>
+                <div class="flex justify-end gap-2 mt-4">
+                    <button type="button" class="btn-modern" onclick="closeGradingModal()">Batal</button>
+                    <button type="submit" class="btn-modern btn-primary">Simpan Nilai</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+const gradingModal = document.getElementById('gradingModal');
+
+document.querySelectorAll('.open-grading').forEach(btn => {
+    btn.addEventListener('click', function() {
+        document.getElementById('submissionId').value = this.dataset.id;
+        document.getElementById('modalStudentName').innerText = this.dataset.name;
+        document.getElementById('modalTaskTitle').innerText = this.dataset.task;
+        document.getElementById('gradeValue').value = this.dataset.grade;
+        document.getElementById('gradeComment').value = this.dataset.comment;
+        gradingModal.style.display = 'flex';
+    });
+});
+
+function closeGradingModal() {
+    gradingModal.style.display = 'none';
+}
+
+document.getElementById('gradingForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const sid = document.getElementById('submissionId').value;
+    const nilai = document.getElementById('gradeValue').value;
+    const komentar = document.getElementById('gradeComment').value;
+
+    try {
+        const response = await fetch(`/api/submission/${sid}/status`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ status: 'graded', nilai, komentar })
+        });
+        const result = await response.json();
+        if (result.status === 'success') {
+            location.reload();
+        } else {
+            alert('Gagal menyimpan nilai: ' + result.message);
+        }
+    } catch (err) {
+        alert('Terjadi kesalahan sistem.');
+    }
+});
+
+document.getElementById('courseFilter').addEventListener('change', function() {
+    const cid = this.value;
+    const rows = document.querySelectorAll('.course-row');
+    rows.forEach(row => {
+        if (cid === 'all' || row.dataset.courseId === cid) {
+            row.style.display = '';
+        } else {
+            row.style.display = 'none';
+        }
+    });
+});
+</script>
+{% endblock %}

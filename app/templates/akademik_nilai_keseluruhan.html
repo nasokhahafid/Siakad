@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+
+{% block title %}Nilai Keseluruhan - SIAKAD{% endblock %}
+{% block page_title %}Nilai Keseluruhan{% endblock %}
+
+{% block content %}
+<div class="animate-fade-in">
+    <div class="stats-grid">
+        <div class="card-modern stat-card">
+            <div class="stat-icon" style="background: rgba(37, 99, 235, 0.1); color: var(--primary);">
+                <i class="fas fa-graduation-cap"></i>
+            </div>
+            <div class="stat-info">
+                <span class="stat-value">{{ ipk }}</span>
+                <span class="stat-label">IPK Kumulatif</span>
+            </div>
+        </div>
+        <div class="card-modern stat-card">
+            <div class="stat-icon" style="background: rgba(16, 185, 129, 0.1); color: var(--success);">
+                <i class="fas fa-book"></i>
+            </div>
+            <div class="stat-info">
+                <span class="stat-value">{{ total_sks }}</span>
+                <span class="stat-label">Total SKS Lulus</span>
+            </div>
+        </div>
+        <div class="card-modern stat-card">
+            <div class="stat-icon" style="background: rgba(245, 158, 11, 0.1); color: var(--warning);">
+                <i class="fas fa-award"></i>
+            </div>
+            <div class="stat-info">
+                <span class="stat-value">A</span>
+                <span class="stat-label">Predikat</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="card-modern">
+        <div class="card-header">
+            <h3 class="flex items-center gap-2">
+                <i class="fas fa-list-ul" style="color: var(--primary);"></i>
+                Rincian Nilai Semua Semester
+            </h3>
+        </div>
+        <div class="card-body">
+            <div style="overflow-x: auto;">
+                <table style="width: 100%; border-collapse: collapse;">
+                    <thead>
+                        <tr style="text-align: left; border-bottom: 2px solid var(--border-light);">
+                            <th style="padding: 1rem;">Semester</th>
+                            <th style="padding: 1rem;">Kode</th>
+                            <th style="padding: 1rem;">Mata Kuliah</th>
+                            <th style="padding: 1rem;">SKS</th>
+                            <th style="padding: 1rem;">Nilai</th>
+                            <th style="padding: 1rem;">Grade</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for grade in grades %}
+                        <tr style="border-bottom: 1px solid var(--border-light);">
+                            <td style="padding: 1rem;">{{ grade.semester }}</td>
+                            <td style="padding: 1rem;">{{ grade.course.kode }}</td>
+                            <td style="padding: 1rem;">{{ grade.course.nama }}</td>
+                            <td style="padding: 1rem;">{{ grade.bobot }}</td>
+                            <td style="padding: 1rem;">{{ grade.nilai }}</td>
+                            <td style="padding: 1rem;">
+                                <span style="padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.85rem; font-weight: 600; 
+                                    {% if grade.grade == 'A' %} background: rgba(16, 185, 129, 0.1); color: var(--success);
+                                    {% elif grade.grade == 'B' %} background: rgba(37, 99, 235, 0.1); color: var(--primary);
+                                    {% else %} background: rgba(245, 158, 11, 0.1); color: var(--warning); {% endif %}">
+                                    {{ grade.grade }}
+                                </span>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

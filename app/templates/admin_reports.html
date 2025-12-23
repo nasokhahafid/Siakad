@@ -1,0 +1,143 @@
+{% extends "base.html" %}
+
+{% block title %}Laporan & Penilaian - SIAKAD Modern{% endblock %}
+
+{% block page_title %}{{ 'Penilaian Mahasiswa' if is_dosen else 'Laporan Sistem Global' }}{% endblock %}
+
+{% block content %}
+<div class="animate-fade-in">
+    {% if not is_dosen %}
+    <!-- Admin Statistics -->
+    <div class="stats-grid">
+        <div class="card-modern stat-card">
+            <div class="stat-icon" style="background: rgba(37, 99, 235, 0.1); color: var(--primary);">
+                <i class="fas fa-users"></i>
+            </div>
+            <div class="stat-info">
+                <span class="stat-value">{{ total_users }}</span>
+                <span class="stat-label">Total Pengguna</span>
+            </div>
+        </div>
+        <div class="card-modern stat-card">
+            <div class="stat-icon" style="background: rgba(16, 185, 129, 0.1); color: var(--success);">
+                <i class="fas fa-file-upload"></i>
+            </div>
+            <div class="stat-info">
+                <span class="stat-value">{{ total_submissions }}</span>
+                <span class="stat-label">Total Pengajuan</span>
+            </div>
+        </div>
+        <div class="card-modern stat-card">
+            <div class="stat-icon" style="background: rgba(245, 158, 11, 0.1); color: var(--warning);">
+                <i class="fas fa-book"></i>
+            </div>
+            <div class="stat-info">
+                <span class="stat-value">{{ total_courses }}</span>
+                <span class="stat-label">Mata Kuliah</span>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <div style="display: grid; grid-template-columns: {{ '1fr' if is_dosen else '2fr 1.2fr' }}; gap: 1.5rem; align-items: start;">
+        <!-- Submissions Column -->
+        <div class="card-modern">
+            <div class="card-header">
+                <h4 style="margin: 0;"><i class="fas fa-list" style="margin-right: 10px; color: var(--primary);"></i> {{ 'Daftar Tugas Masuk' if is_dosen else 'Aktivitas Pengajuan Terbaru' }}</h4>
+            </div>
+            <div class="card-body" style="padding: 0;">
+                <div style="overflow-x: auto;">
+                    <table style="width: 100%; border-collapse: collapse;">
+                        <thead>
+                            <tr style="background: var(--bg-main); border-bottom: 1px solid var(--border-light); text-align: left;">
+                                <th style="padding: 1rem 1.5rem; font-size: 0.8rem; text-transform: uppercase;">Mahasiswa / Tugas</th>
+                                <th style="padding: 1rem 1.5rem; font-size: 0.8rem; text-transform: uppercase;">Mata Kuliah</th>
+                                <th style="padding: 1rem 1.5rem; font-size: 0.8rem; text-transform: uppercase;">Status</th>
+                                <th style="padding: 1rem 1.5rem; font-size: 0.8rem; text-transform: uppercase; text-align: center;">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% set list = submissions if is_dosen else recent_submissions %}
+                            {% for submission in list %}
+                            <tr style="border-bottom: 1px solid var(--border-light);">
+                                <td style="padding: 1.25rem 1.5rem;">
+                                    <div class="flex items-center gap-3">
+                                        <div style="width: 32px; height: 32px; border-radius: 50%; background: var(--primary); color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.75rem;">
+                                            {{ (submission.student.nama[0] if submission.student else '?') | upper }}
+                                        </div>
+                                        <div>
+                                            <span style="display: block; font-weight: 600; font-size: 0.9rem;">{{ submission.judul }}</span>
+                                            <small class="text-muted">{{ submission.student.nama if submission.student else 'Unknown Student' }}</small>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td style="padding: 1.25rem 1.5rem; font-size: 0.85rem;">
+                                    {{ submission.course.nama if submission.course else 'N/A' }}
+                                </td>
+                                <td style="padding: 1.25rem 1.5rem;">
+                                    {% if submission.status == 'pending' %}
+                                    <span style="background: rgba(245, 158, 11, 0.1); color: var(--warning); padding: 4px 10px; border-radius: 20px; font-size: 0.7rem; font-weight: 700; text-transform: uppercase;">Pending</span>
+                                    {% elif submission.status == 'approved' or submission.status == 'graded' %}
+                                    <span style="background: rgba(16, 185, 129, 0.1); color: var(--success); padding: 4px 10px; border-radius: 20px; font-size: 0.7rem; font-weight: 700; text-transform: uppercase;">Selesai</span>
+                                    {% else %}
+                                    <span style="background: var(--bg-main); color: var(--text-muted); padding: 4px 10px; border-radius: 20px; font-size: 0.7rem; font-weight: 700; text-transform: uppercase;">{{ submission.status }}</span>
+                                    {% endif %}
+                                </td>
+                                <td style="padding: 1.25rem 1.5rem; text-align: center;">
+                                    <div class="flex justify-center gap-2">
+                                        <a href="#" class="btn-icon" title="Lihat Detail"><i class="fas fa-external-link-alt" style="color: var(--primary);"></i></a>
+                                        {% if is_dosen %}
+                                        <button class="btn-icon" title="Beri Nilai" onclick="openGradeModal({{ submission.id }})"><i class="fas fa-award" style="color: var(--success);"></i></button>
+                                        {% endif %}
+                                    </div>
+                                </td>
+                            </tr>
+                            {% else %}
+                            <tr>
+                                <td colspan="4" style="padding: 4rem; text-align: center; color: var(--text-muted);">
+                                    <i class="fas fa-inbox" style="display: block; font-size: 2rem; margin-bottom: 1rem; opacity: 0.2;"></i>
+                                    Belum ada data pengajuan yang masuk.
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        {% if not is_dosen %}
+        <!-- Course Stats Column (Admin Only) -->
+        <div class="card-modern">
+            <div class="card-header">
+                <h4 style="margin: 0;"><i class="fas fa-chart-pie" style="margin-right: 10px; color: var(--warning);"></i> Statistik MK</h4>
+            </div>
+            <div class="card-body" style="padding: 0;">
+                <div style="display: flex; flex-direction: column;">
+                    {% for stat in courses_stats %}
+                    <div style="padding: 1rem 1.5rem; border-bottom: 1px solid var(--border-light); last-child: border-bottom-none;">
+                        <div class="flex justify-between items-center mb-1">
+                            <span style="font-weight: 700; font-size: 0.85rem;">{{ stat.course.kode }}</span>
+                            <span style="font-size: 0.75rem; color: var(--text-muted);">{{ stat.student_count }} Mahasiswa</span>
+                        </div>
+                        <p style="margin: 0; font-size: 0.8rem; color: var(--text-main); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ stat.course.nama }}</p>
+                        <div style="height: 4px; background: var(--bg-main); border-radius: 2px; margin-top: 8px;">
+                            <div style="height: 100%; background: var(--primary); width: {{ (stat.submission_count / (stat.student_count if stat.student_count > 0 else 1) * 100) | round }}%; border-radius: 2px;"></div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+{% if is_dosen %}
+<script>
+function openGradeModal(sid) {
+    alert("Antarmuka penilaian untuk ID #" + sid + " sedang diproses pihak akademik.");
+}
+</script>
+{% endif %}
+{% endblock %}

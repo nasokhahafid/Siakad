@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>
+      {% block title %}SIAKAD - Sistem Informasi Akademik{% endblock %}
+    </title>
+
+    <!-- Modern Fonts -->
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/styles.css') }}"
+    />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎓</text></svg>"
+    />
+
+    <!-- Font Awesome -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+  </head>
+  <body class="{% block body_class %}{% endblock %}">
+    <div class="app-wrapper">
+      <!-- Sidebar -->
+      {% include 'sidebar.html' %}
+
+
+      <!-- Main Layout -->
+      <div class="main-layout" id="mainLayout">
+        <!-- Topbar -->
+        <header class="topbar">
+          <div class="flex items-center gap-4">
+            <button
+              class="btn-icon"
+              id="menuToggle"
+              style="
+                background: transparent;
+                border: none;
+                font-size: 1.25rem;
+                cursor: pointer;
+                color: var(--text-main);
+              "
+            >
+              <i class="fas fa-bars"></i>
+            </button>
+            <h1 class="topbar-title">
+              {% block page_title %}Dashboard{% endblock %}
+            </h1>
+          </div>
+
+          <div class="flex items-center gap-4">
+            <div class="search-bar" style="position: relative; display: none">
+              <!-- Hidden for now but added for modern look -->
+              <i
+                class="fas fa-search"
+                style="
+                  position: absolute;
+                  left: 12px;
+                  top: 50%;
+                  transform: translateY(-50%);
+                  color: var(--text-muted);
+                "
+              ></i>
+              <input
+                type="text"
+                placeholder="Cari layanan..."
+                style="
+                  padding: 0.5rem 1rem 0.5rem 2.5rem;
+                  border-radius: var(--radius-md);
+                  background: var(--bg-main);
+                  width: 200px;
+                "
+              />
+            </div>
+            <a
+              href="{{ url_for('akademik.profil') }}"
+              class="user-profile flex items-center gap-3"
+              style="text-decoration: none; color: inherit"
+            >
+              <div class="text-right" style="line-height: 1.2">
+                <span
+                  style="display: block; font-weight: 600; font-size: 0.9rem"
+                  >{{ current_user.nama }}</span
+                >
+                <span
+                  style="
+                    font-size: 0.75rem;
+                    color: var(--text-muted);
+                    text-transform: capitalize;
+                  "
+                  >{{ current_user.role }}</span
+                >
+              </div>
+              <div
+                class="avatar"
+                style="
+                  width: 40px;
+                  height: 40px;
+                  border-radius: 50%;
+                  background: var(--primary);
+                  color: white;
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  font-weight: 600;
+                "
+              >
+                {{ current_user.nama[0] }}
+              </div>
+            </a>
+          </div>
+        </header>
+
+        <!-- Content -->
+        <main class="content-body">
+          {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+              {% for category, message in messages %}
+                <div class="alert alert-{{ category }} animate-fade-in">
+                  {{ message }}
+                </div>
+              {% endfor %}
+            {% endif %}
+          {% endwith %}
+          {% block content %}{% endblock %}
+        </main>
+      </div>
+    </div>
+
+    <!-- Modal Base -->
+    <div
+      id="modal"
+      class="modal-overlay"
+      style="
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(4px);
+        z-index: 2000;
+        align-items: center;
+        justify-content: center;
+        padding: 1rem;
+      "
+    >
+      <div
+        class="login-card animate-fade-in"
+        style="max-width: 500px; padding: 2rem"
+      >
+        <div id="modalHeader" class="flex justify-between items-center mb-4">
+          <h3 id="modalTitle" style="margin: 0">Modal Title</h3>
+          <button
+            onclick="closeModal()"
+            style="
+              background: transparent;
+              border: none;
+              font-size: 1.2rem;
+              cursor: pointer;
+            "
+          >
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div id="modalBody" class="mb-4"></div>
+        <div id="modalFooter" class="flex justify-end gap-2">
+          <button id="modalCancel" class="btn-modern" onclick="closeModal()">
+            Batal
+          </button>
+          <button id="modalConfirm" class="btn-modern btn-primary">
+            Konfirmasi
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    <script>
+      function toggleSubMenu(id, e) {
+        const submenu = document.getElementById(id);
+        const icon = e.currentTarget.querySelector(".fa-chevron-down");
+        
+        // If clicking the text/content of the main link, we might want to navigate
+        // If clicking the arrow specifically, we toggle.
+        // For simplicity, let's toggle but ONLY prevent default if it's a '#' link
+        
+        submenu.classList.toggle("show");
+        if (icon) {
+          icon.style.transform = submenu.classList.contains("show") ? "rotate(180deg)" : "rotate(0deg)";
+        }
+        
+        // If the link is just a toggle (href="#"), prevent navigation
+        if (e.currentTarget.getAttribute('href') === '#' || e.currentTarget.getAttribute('href') === 'javascript:void(0)') {
+            e.preventDefault();
+        }
+      }
+    </script>
+    {% block scripts %}{% endblock %}
+  </body>
+</html>

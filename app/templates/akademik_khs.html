@@ -1,0 +1,127 @@
+{% extends "base.html" %}
+
+{% block title %}Kartu Hasil Studi - SIAKAD Modern{% endblock %}
+
+{% block page_title %}Kartu Hasil Studi (KHS){% endblock %}
+
+{% block content %}
+<div class="animate-fade-in">
+    <!-- Selection & Summary -->
+    <div style="display: grid; grid-template-columns: 1fr 3fr; gap: 1.5rem; margin-bottom: 2rem;">
+        <div class="card-modern" style="padding: 1.5rem;">
+            <h4 style="margin-bottom: 1rem;"><i class="fas fa-filter" style="margin-right: 8px; color: var(--primary);"></i> Filter</h4>
+            <div class="form-group">
+                <label class="form-label">Tahun Akademik</label>
+                <select class="form-control">
+                    <option>2023/2024</option>
+                    <option>2022/2023</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Semester</label>
+                <select class="form-control">
+                    <option>Semester 5 (Ganjil)</option>
+                    <option>Semester 4 (Genap)</option>
+                </select>
+            </div>
+            <button class="btn-modern btn-primary" style="width: 100%; justify-content: center;">Tampilkan</button>
+        </div>
+
+        <div class="stats-grid" style="margin-bottom: 0;">
+            <div class="card-modern stat-card">
+                <div class="stat-icon" style="background: rgba(37, 99, 235, 0.1); color: var(--primary);">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <div class="stat-info">
+                    <span class="stat-value">3.75</span>
+                    <span class="stat-label">IP Semester</span>
+                </div>
+            </div>
+            <div class="card-modern stat-card">
+                <div class="stat-icon" style="background: rgba(16, 185, 129, 0.1); color: var(--success);">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <div class="stat-info">
+                    <span class="stat-value">18</span>
+                    <span class="stat-label">SKS Diambil</span>
+                </div>
+            </div>
+            <div class="card-modern stat-card">
+                <div class="stat-icon" style="background: rgba(245, 158, 11, 0.1); color: var(--warning);">
+                    <i class="fas fa-award"></i>
+                </div>
+                <div class="stat-info">
+                    <span class="stat-value">A</span>
+                    <span class="stat-label">Grade Rata-rata</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Results Table -->
+    <div class="card-modern">
+        <div class="card-header">
+            <h4 style="margin: 0;">Rincian Nilai Semester 5</h4>
+            <div class="flex gap-2">
+                <button class="btn-modern" onclick="window.print()" style="border: 1px solid var(--border-light);">
+                    <i class="fas fa-print"></i> Cetak
+                </button>
+                <button class="btn-modern btn-primary" onclick="downloadKHS()">
+                    <i class="fas fa-download"></i> Download PDF
+                </button>
+            </div>
+        </div>
+        <div class="card-body" style="padding: 0;">
+            <div style="overflow-x: auto;">
+                <table style="width: 100%; border-collapse: collapse; text-align: left;">
+                    <thead>
+                        <tr style="background: var(--bg-main); border-bottom: 1px solid var(--border-light);">
+                            <th style="padding: 1.25rem 1.5rem; font-family: 'Outfit'; font-weight: 600; color: var(--text-muted); font-size: 0.85rem; text-transform: uppercase;">Kode</th>
+                            <th style="padding: 1.25rem 1.5rem; font-family: 'Outfit'; font-weight: 600; color: var(--text-muted); font-size: 0.85rem; text-transform: uppercase;">Mata Kuliah</th>
+                            <th style="padding: 1.25rem 1.5rem; font-family: 'Outfit'; font-weight: 600; color: var(--text-muted); font-size: 0.85rem; text-transform: uppercase; text-align: center;">SKS</th>
+                            <th style="padding: 1.25rem 1.5rem; font-family: 'Outfit'; font-weight: 600; color: var(--text-muted); font-size: 0.85rem; text-transform: uppercase; text-align: center;">Nilai</th>
+                            <th style="padding: 1.25rem 1.5rem; font-family: 'Outfit'; font-weight: 600; color: var(--text-muted); font-size: 0.85rem; text-transform: uppercase; text-align: center;">Huruf</th>
+                            <th style="padding: 1.25rem 1.5rem; font-family: 'Outfit'; font-weight: 600; color: var(--text-muted); font-size: 0.85rem; text-transform: uppercase; text-align: center;">Bobot</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr style="border-bottom: 1px solid var(--border-light);">
+                            <td style="padding: 1.25rem 1.5rem;"><span style="font-weight: 600; color: var(--primary);">IF201</span></td>
+                            <td style="padding: 1.25rem 1.5rem;">
+                                <span style="display: block; font-weight: 600;">Pemrograman Web Modern</span>
+                                <small class="text-muted">Dr. Budi Santoso</small>
+                            </td>
+                            <td style="padding: 1.25rem 1.5rem; text-align: center; font-weight: 600;">3</td>
+                            <td style="padding: 1.25rem 1.5rem; text-align: center;">88</td>
+                            <td style="padding: 1.25rem 1.5rem; text-align: center;"><span style="background: rgba(16, 185, 129, 0.1); color: var(--success); padding: 4px 12px; border-radius: 20px; font-weight: 700;">A</span></td>
+                            <td style="padding: 1.25rem 1.5rem; text-align: center; font-weight: 600;">4.00</td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid var(--border-light);">
+                            <td style="padding: 1.25rem 1.5rem;"><span style="font-weight: 600; color: var(--primary);">IF202</span></td>
+                            <td style="padding: 1.25rem 1.5rem;">
+                                <span style="display: block; font-weight: 600;">Arsitektur Basis Data</span>
+                                <small class="text-muted">Prof. Siti Aminah</small>
+                            </td>
+                            <td style="padding: 1.25rem 1.5rem; text-align: center; font-weight: 600;">3</td>
+                            <td style="padding: 1.25rem 1.5rem; text-align: center;">82</td>
+                            <td style="padding: 1.25rem 1.5rem; text-align: center;"><span style="background: rgba(16, 185, 129, 0.1); color: var(--success); padding: 4px 12px; border-radius: 20px; font-weight: 700;">A</span></td>
+                            <td style="padding: 1.25rem 1.5rem; text-align: center; font-weight: 600;">4.00</td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid var(--border-light);">
+                            <td style="padding: 1.25rem 1.5rem;"><span style="font-weight: 600; color: var(--primary);">IF203</span></td>
+                            <td style="padding: 1.25rem 1.5rem;">
+                                <span style="display: block; font-weight: 600;">Jaringan Komputer Lanjut</span>
+                                <small class="text-muted">Ir. Ahmad Rahman</small>
+                            </td>
+                            <td style="padding: 1.25rem 1.5rem; text-align: center; font-weight: 600;">3</td>
+                            <td style="padding: 1.25rem 1.5rem; text-align: center;">78</td>
+                            <td style="padding: 1.25rem 1.5rem; text-align: center;"><span style="background: rgba(37, 99, 235, 0.1); color: var(--primary); padding: 4px 12px; border-radius: 20px; font-weight: 700;">B+</span></td>
+                            <td style="padding: 1.25rem 1.5rem; text-align: center; font-weight: 600;">3.50</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

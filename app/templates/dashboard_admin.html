@@ -1,0 +1,160 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard Admin - SIAKAD Modern{% endblock %}
+
+{% block page_title %}Panel Administrator{% endblock %}
+
+{% block content %}
+<div class="animate-fade-in">
+    <!-- Welcome Profile Banner -->
+    <div class="card-modern mb-4" style="background: linear-gradient(135deg, #1e293b, #0f172a); color: white; border: none;">
+        <div class="card-body flex justify-between items-center py-5">
+            <div>
+                <h2 style="color: white; margin-bottom: 0.5rem; font-family: 'Outfit';">Selamat Datang, Administrator</h2>
+                <p style="opacity: 0.7; margin: 0;">Status Sistem: <span style="color: #10b981; font-weight: 700;"><i class="fas fa-circle" style="font-size: 0.7rem;"></i> Optimal</span></p>
+            </div>
+            <div class="flex gap-4">
+                <a href="{{ url_for('admin.settings') }}" class="btn-modern btn-primary" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); text-decoration: none;"><i class="fas fa-cog"></i> Pengaturan</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stats Grid -->
+    <div class="stats-grid">
+        <div class="card-modern stat-card">
+            <div class="stat-icon" style="background: rgba(37, 99, 235, 0.1); color: var(--primary);">
+                <i class="fas fa-user-graduate"></i>
+            </div>
+            <div class="stat-info">
+                <span class="stat-value">{{ total_students }}</span>
+                <span class="stat-label">Mahasiswa</span>
+            </div>
+        </div>
+        <div class="card-modern stat-card">
+            <div class="stat-icon" style="background: rgba(16, 185, 129, 0.1); color: var(--success);">
+                <i class="fas fa-chalkboard-teacher"></i>
+            </div>
+            <div class="stat-info">
+                <span class="stat-value">{{ total_lecturers }}</span>
+                <span class="stat-label">Dosen</span>
+            </div>
+        </div>
+        <div class="card-modern stat-card">
+            <div class="stat-icon" style="background: rgba(245, 158, 11, 0.1); color: var(--warning);">
+                <i class="fas fa-book"></i>
+            </div>
+            <div class="stat-info">
+                <span class="stat-value">{{ total_courses }}</span>
+                <span class="stat-label">Mata Kuliah</span>
+            </div>
+        </div>
+        <div class="card-modern stat-card">
+            <div class="stat-icon" style="background: rgba(6, 182, 212, 0.1); color: var(--info);">
+                <i class="fas fa-users"></i>
+            </div>
+            <div class="stat-info">
+                <span class="stat-value">{{ total_users }}</span>
+                <span class="stat-label">Total User</span>
+            </div>
+        </div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 1.5rem;">
+        <!-- System Health -->
+        <div class="card-modern">
+            <div class="card-header">
+                <h4 style="margin: 0;"><i class="fas fa-server" style="margin-right: 10px; color: var(--primary);"></i> Performa Sistem</h4>
+            </div>
+            <div class="card-body">
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.5rem;">
+                    <div>
+                        <span class="text-muted" style="font-size: 0.8rem; display: block; margin-bottom: 0.5rem; font-weight: 600;">CPU Usage</span>
+                        <div style="height: 60px; display: flex; align-items: flex-end; gap: 4px;">
+                            <div style="flex: 1; height: 40%; background: var(--border-light); border-radius: 2px;"></div>
+                            <div style="flex: 1; height: 60%; background: var(--border-light); border-radius: 2px;"></div>
+                            <div style="flex: 1; height: 30%; background: var(--border-light); border-radius: 2px;"></div>
+                            <div style="flex: 1; height: 90%; background: var(--primary); border-radius: 2px;"></div>
+                        </div>
+                        <span style="display: block; font-weight: 700; font-size: 1.25rem; margin-top: 0.5rem;">42%</span>
+                    </div>
+                    <div>
+                        <span class="text-muted" style="font-size: 0.8rem; display: block; margin-bottom: 0.5rem; font-weight: 600;">Memory Usage</span>
+                        <div style="height: 60px; display: flex; align-items: flex-end; gap: 4px;">
+                            <div style="flex: 1; height: 70%; background: var(--border-light); border-radius: 2px;"></div>
+                            <div style="flex: 1; height: 80%; background: var(--border-light); border-radius: 2px;"></div>
+                            <div style="flex: 1; height: 65%; background: var(--primary); border-radius: 2px;"></div>
+                            <div style="flex: 1; height: 30%; background: var(--border-light); border-radius: 2px;"></div>
+                        </div>
+                        <span style="display: block; font-weight: 700; font-size: 1.25rem; margin-top: 0.5rem;">6.4 GB</span>
+                    </div>
+                    <div>
+                        <span class="text-muted" style="font-size: 0.8rem; display: block; margin-bottom: 0.5rem; font-weight: 600;">Storage Status</span>
+                        <div style="height: 60px; display: flex; align-items: flex-end; gap: 4px;">
+                            <div style="flex: 1; height: 20%; background: var(--border-light); border-radius: 2px;"></div>
+                            <div style="flex: 1; height: 25%; background: var(--border-light); border-radius: 2px;"></div>
+                            <div style="flex: 1; height: 35%; background: var(--border-light); border-radius: 2px;"></div>
+                            <div style="flex: 1; height: 40%; background: var(--success); border-radius: 2px;"></div>
+                        </div>
+                        <span style="display: block; font-weight: 700; font-size: 1.25rem; margin-top: 0.5rem;">780 GB</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="card-modern">
+            <div class="card-header">
+                <h4 style="margin: 0;"><i class="fas fa-bolt" style="margin-right: 10px; color: var(--warning);"></i> Aksi Cepat</h4>
+            </div>
+            <div class="card-body flex flex-direction-column gap-3">
+                <a href="{{ url_for('admin.add_user') }}" class="btn-modern" style="border: 1px solid var(--border-light); width: 100%; justify-content: flex-start;">
+                    <i class="fas fa-user-plus" style="color: var(--primary);"></i> Tambah Pengguna Baru
+                </a>
+                <a href="{{ url_for('admin.add_course') }}" class="btn-modern" style="border: 1px solid var(--border-light); width: 100%; justify-content: flex-start;">
+                    <i class="fas fa-plus-square" style="color: var(--success);"></i> Tambah Mata Kuliah
+                </a>
+                <a href="#" class="btn-modern" style="border: 1px solid var(--border-light); width: 100%; justify-content: flex-start;">
+                    <i class="fas fa-file-export" style="color: var(--info);"></i> Ekspor Laporan Akademik
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent System Logs -->
+    <div class="card-modern mt-4">
+        <div class="card-header">
+            <h4 style="margin: 0;"><i class="fas fa-list-alt" style="margin-right: 10px; color: var(--primary);"></i> Log Aktivitas Terakhir</h4>
+        </div>
+        <div class="card-body" style="padding: 0;">
+            <div style="overflow-x: auto;">
+                <table style="width: 100%; border-collapse: collapse;">
+                    <thead>
+                        <tr style="background: var(--bg-main); border-bottom: 1px solid var(--border-light); text-align: left;">
+                            <th style="padding: 1rem 1.5rem; font-size: 0.8rem; text-transform: uppercase; color: var(--text-muted);">Timestamp</th>
+                            <th style="padding: 1rem 1.5rem; font-size: 0.8rem; text-transform: uppercase; color: var(--text-muted);">User</th>
+                            <th style="padding: 1rem 1.5rem; font-size: 0.8rem; text-transform: uppercase; color: var(--text-muted);">Aksi</th>
+                            <th style="padding: 1rem 1.5rem; font-size: 0.8rem; text-transform: uppercase; color: var(--text-muted);">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for activity in recent_activities %}
+                        <tr style="border-bottom: 1px solid var(--border-light);">
+                            <td style="padding: 1rem 1.5rem; font-size: 0.85rem;">{{ activity.time }}</td>
+                            <td style="padding: 1rem 1.5rem; font-size: 0.85rem; font-weight: 600;">System Admin</td>
+                            <td style="padding: 1rem 1.5rem; font-size: 0.85rem;">{{ activity.description }}</td>
+                            <td style="padding: 1rem 1.5rem;">
+                                <span style="background: rgba(16, 185, 129, 0.1); color: var(--success); padding: 2px 8px; border-radius: 12px; font-size: 0.75rem; font-weight: 700;">Success</span>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .flex-direction-column { flex-direction: column; }
+</style>
+{% endblock %}

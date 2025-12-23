@@ -1,0 +1,181 @@
+{% extends "base.html" %}
+
+{% block title %}Kartu Rencana Studi - SIAKAD Modern{% endblock %}
+
+{% block page_title %}Pengambilan KRS{% endblock %}
+
+{% block content %}
+<div class="animate-fade-in">
+    <!-- Semester Info Banner -->
+    <div class="card-modern mb-4" style="background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: white; border: none;">
+        <div class="card-body flex justify-between items-center">
+            <div>
+                <h3 style="color: white; margin: 0;">Semester Ganjil 2023/2024</h3>
+                <p style="opacity: 0.8; margin: 0;">Batas pengambilan: 20 Januari 2025 • Maksimal 24 SKS</p>
+            </div>
+            <div class="flex gap-4">
+                <div style="text-align: center;">
+                    <span style="display: block; font-size: 1.5rem; font-weight: 700;" id="total-sks-banner">0</span>
+                    <small style="opacity: 0.7; font-weight: 600; text-transform: uppercase; font-size: 0.7rem;">SKS Terpilih</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 1.5rem;">
+        <!-- Course List -->
+        <div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                {% for course in courses %}
+                <div class="card-modern course-card" id="card-{{ course.id }}" style="cursor: pointer; transition: var(--transition);">
+                    <div class="card-body">
+                        <div class="flex justify-between items-start mb-3">
+                            <span style="background: rgba(37, 99, 235, 0.1); color: var(--primary); padding: 4px 10px; border-radius: 6px; font-weight: 700; font-size: 0.75rem;">{{ course.kode }}</span>
+                            <div class="checkbox-container">
+                                <input type="checkbox" id="course-{{ course.id }}" class="course-checkbox-input" style="width: 20px; height: 20px;" 
+                                       data-id="{{ course.id }}" data-nama="{{ course.nama }}" data-sks="{{ course.sks }}" data-kode="{{ course.kode }}">
+                            </div>
+                        </div>
+                        <h4 style="margin-bottom: 0.5rem; font-size: 1.1rem; line-height: 1.3;">{{ course.nama }}</h4>
+                        <div style="display: flex; gap: 1rem; color: var(--text-muted); font-size: 0.85rem; margin-bottom: 1rem;">
+                            <span><i class="fas fa-user-tie" style="margin-right: 5px;"></i> {{ course.dosen.nama }}</span>
+                            <span><i class="fas fa-layer-group" style="margin-right: 5px;"></i> {{ course.sks }} SKS</span>
+                        </div>
+                        <div style="display: flex; gap: 4px; flex-wrap: wrap;">
+                            <span style="font-size: 0.7rem; padding: 2px 8px; background: var(--bg-main); border-radius: 4px; color: var(--text-muted);">Semester {{ course.semester }}</span>
+                            <span style="font-size: 0.7rem; padding: 2px 8px; background: var(--bg-main); border-radius: 4px; color: var(--text-muted);">Kuota: 40/45</span>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Selection Summary Sidebar -->
+        <div style="position: sticky; top: 90px; height: fit-content;">
+            <div class="card-modern">
+                <div class="card-header">
+                    <h4 style="margin: 0;"><i class="fas fa-shopping-cart" style="margin-right: 10px; color: var(--primary);"></i> Draft KRS</h4>
+                </div>
+                <div class="card-body" style="padding: 0;">
+                    <div id="selected-courses-container" style="max-height: 400px; overflow-y: auto;">
+                        <div style="padding: 2rem; text-align: center; color: var(--text-muted);" id="empty-draft-msg">
+                            <i class="fas fa-box-open" style="font-size: 2rem; margin-bottom: 1rem; display: block; opacity: 0.3;"></i>
+                            <p>Belum ada mata kuliah yang dipilih</p>
+                        </div>
+                    </div>
+                    <div style="padding: 1.5rem; background: var(--bg-main); border-top: 1px solid var(--border-light);">
+                        <div class="flex justify-between items-center mb-4">
+                            <span style="font-weight: 600;">Total SKS</span>
+                            <span style="font-size: 1.25rem; font-weight: 800; color: var(--primary);" id="total-sks-display">0</span>
+                        </div>
+                        <button class="btn-modern btn-primary" id="submit-krs-btn" style="width: 100%; justify-content: center;" disabled>
+                            Ajukan KRS Sekarang
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const checkboxes = document.querySelectorAll('.course-checkbox-input');
+        const draftContainer = document.getElementById('selected-courses-container');
+        const emptyMsg = document.getElementById('empty-draft-msg');
+        const totalSksDisplay = document.getElementById('total-sks-display');
+        const totalSksBanner = document.getElementById('total-sks-banner');
+        const submitBtn = document.getElementById('submit-krs-btn');
+        
+        let selectedCourses = new Map();
+        let totalSks = 0;
+
+        checkboxes.forEach(cb => {
+            cb.addEventListener('change', function() {
+                const id = this.dataset.id;
+                const nama = this.dataset.nama;
+                const sks = parseInt(this.dataset.sks);
+                const kode = this.dataset.kode;
+                const card = document.getElementById('card-' + id);
+
+                if (this.checked) {
+                    if (totalSks + sks > 24) {
+                        this.checked = false;
+                        alert('Batas maksimal SKS adalah 24!');
+                        return;
+                    }
+                    selectedCourses.set(id, {nama, sks, kode});
+                    totalSks += sks;
+                    card.style.borderColor = 'var(--primary)';
+                    card.style.background = 'rgba(37, 99, 235, 0.02)';
+                } else {
+                    selectedCourses.delete(id);
+                    totalSks -= sks;
+                    card.style.borderColor = 'var(--border-light)';
+                    card.style.background = 'white';
+                }
+                
+                updateUI();
+            });
+            
+            // Make whole card clickable
+            cb.closest('.course-card').addEventListener('click', (e) => {
+                if(e.target !== cb) cb.click();
+            });
+        });
+
+        function updateUI() {
+            totalSksDisplay.innerText = totalSks;
+            totalSksBanner.innerText = totalSks;
+            submitBtn.disabled = selectedCourses.size === 0;
+            
+            if (selectedCourses.size === 0) {
+                draftContainer.innerHTML = '';
+                draftContainer.appendChild(emptyMsg);
+            } else {
+                emptyMsg.remove();
+                draftContainer.innerHTML = '';
+                selectedCourses.forEach((course, id) => {
+                    const item = document.createElement('div');
+                    item.style.padding = '1rem 1.5rem';
+                    item.style.borderBottom = '1px solid var(--border-light)';
+                    item.style.display = 'flex';
+                    item.style.justifyContent = 'space-between';
+                    item.style.alignItems = 'center';
+                    item.innerHTML = `
+                        <div>
+                            <span style="display: block; font-weight: 600; font-size: 0.9rem;">${course.nama}</span>
+                            <small class="text-muted">${course.kode} • ${course.sks} SKS</small>
+                        </div>
+                        <button onclick="document.getElementById('course-${id}').click()" style="background: transparent; border: none; color: var(--danger); cursor: pointer;">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    `;
+                    draftContainer.appendChild(item);
+                });
+            }
+        }
+
+        submitBtn.addEventListener('click', function() {
+            if (confirm('Apakah Anda yakin ingin mengajukan draft KRS ini?')) {
+                const course_ids = Array.from(selectedCourses.keys());
+                fetch('/akademik/krs/submit', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ course_ids })
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if(data.status === 'success') {
+                        alert('KRS Berhasil diajukan!');
+                        location.reload();
+                    } else {
+                        alert('Gagal: ' + data.message);
+                    }
+                });
+            }
+        });
+    });
+</script>
+{% endblock %}

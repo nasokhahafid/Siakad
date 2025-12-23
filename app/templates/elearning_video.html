@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+
+{% block title %}Video Player - SIAKAD Modern{% endblock %}
+
+{% block page_title %}E-Learning Video{% endblock %}
+
+{% block content %}
+<div class="animate-fade-in">
+    <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 1.5rem;">
+        <!-- Video Player Column -->
+        <div class="card-modern" style="padding: 0;">
+            <div style="background: #000; aspect-ratio: 16/9; display: flex; align-items: center; justify-content: center; overflow: hidden;">
+                {% if current_video_url %}
+                    <video id="mainVideo" style="width: 100%; height: 100%;" src="{{ current_video_url }}" controls></video>
+                {% else %}
+                    <div class="text-center text-white" style="opacity: 0.5;">
+                        <i class="fas fa-video-slash" style="font-size: 3rem; margin-bottom: 1rem;"></i>
+                        <p>Video tidak ditemukan atau belum dipilih</p>
+                    </div>
+                {% endif %}
+            </div>
+            <div class="card-body">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <h3 id="videoTitle" style="margin: 0; font-family: 'Outfit';">{{ current_title if current_title else 'Pilih video untuk ditonton' }}</h3>
+                        <p class="text-muted" style="margin-top: 5px; font-size: 0.9rem;">Materi Pertemuan Minggu Ke-1 • Informatika</p>
+                    </div>
+                    <div class="flex gap-2">
+                        <button class="btn-modern" style="border: 1px solid var(--border-light);"><i class="fas fa-bookmark"></i> Simpan</button>
+                        <button class="btn-modern btn-primary"><i class="fas fa-download"></i> Unduh</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Playlist Column -->
+        <div class="card-modern" style="display: flex; flex-direction: column;">
+            <div class="card-header">
+                <h4 style="margin: 0;"><i class="fas fa-list-ul" style="margin-right: 10px; color: var(--primary);"></i> Playlist Materi</h4>
+            </div>
+            <div class="card-body" style="padding: 0; overflow-y: auto; max-height: 60vh;">
+                {% for item in playlist %}
+                <a href="{{ item.id and url_for('elearning.video', video_id=item.id) or '#' }}" 
+                   class="playlist-item {{ current_title == item.title and 'active-item' or '' }}"
+                   onclick="{% if not item.id %}event.preventDefault(); updatePlayer('{{ item.url }}', '{{ item.title }}');{% endif %}"
+                   style="display: flex; gap: 1rem; padding: 1.25rem 1.5rem; text-decoration: none; color: inherit; border-bottom: 1px solid var(--border-light); transition: var(--transition);">
+                    <div style="width: 40px; height: 40px; background: var(--bg-main); border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                        <i class="fas {{ current_title == item.title and 'fa-pause' or 'fa-play' }}" style="color: var(--primary); font-size: 0.8rem;"></i>
+                    </div>
+                    <div>
+                        <span style="display: block; font-weight: 600; font-size: 0.9rem; line-height: 1.2;">{{ item.title }}</span>
+                        <small class="text-muted">Durasi: 45:00</small>
+                    </div>
+                </a>
+                {% else %}
+                <div style="padding: 2rem; text-align: center; color: var(--text-muted);">
+                    Tidak ada video di playlist.
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function updatePlayer(url, title) {
+    const video = document.getElementById('mainVideo');
+    const titleEl = document.getElementById('videoTitle');
+    
+    if (video) video.src = url;
+    if (titleEl) titleEl.textContent = title;
+    
+    // Update active class
+    document.querySelectorAll('.playlist-item').forEach(el => {
+        el.classList.remove('active-item');
+        if (el.innerText.includes(title)) el.classList.add('active-item');
+    });
+}
+</script>
+
+<style>
+    .playlist-item:hover {
+        background-color: var(--bg-main);
+    }
+    .active-item {
+        background-color: rgba(37, 99, 235, 0.05);
+        border-left: 4px solid var(--primary);
+    }
+    .active-item span {
+        color: var(--primary);
+    }
+</style>
+{% endblock %}

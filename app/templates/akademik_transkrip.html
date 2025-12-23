@@ -1,0 +1,101 @@
+{% extends 'base.html' %}
+
+{% block title %}Transkrip Nilai - SIAKAD{% endblock %}
+{% block page_title %}Transkrip Nilai{% endblock %}
+
+{% block content %}
+<div class="animate-fade-in">
+    <div class="card-modern">
+        <div class="card-header flex justify-between items-center">
+            <h3 class="flex items-center gap-2">
+                <i class="fas fa-file-alt" style="color: var(--primary);"></i>
+                Transkrip Nilai Akademik
+            </h3>
+            <button class="btn-modern btn-primary" onclick="window.print()">
+                <i class="fas fa-print"></i> Cetak Transkrip
+            </button>
+        </div>
+        <div class="card-body">
+            <div style="text-align: center; margin-bottom: 2rem;">
+                <h2 style="margin-bottom: 0.5rem;">TRANSKRIP NILAI SEMENTARA</h2>
+                <p style="color: var(--text-muted);">Mahasiswa: {{ current_user.nama }} ({{ current_user.nim }})</p>
+                <p style="color: var(--text-muted);">Program Studi: {{ current_user.program_studi }}</p>
+            </div>
+
+            <div style="overflow-x: auto;">
+                <table style="width: 100%; border-collapse: collapse;">
+                    <thead>
+                        <tr style="text-align: left; background: var(--bg-main); border-bottom: 2px solid var(--border-light);">
+                            <th style="padding: 1rem;">No</th>
+                            <th style="padding: 1rem;">Kode</th>
+                            <th style="padding: 1rem;">Mata Kuliah</th>
+                            <th style="padding: 1rem; text-align: center;">SKS</th>
+                            <th style="padding: 1rem; text-align: center;">Grade</th>
+                            <th style="padding: 1rem; text-align: center;">Bobot</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for grade in grades %}
+                        <tr style="border-bottom: 1px solid var(--border-light);">
+                            <td style="padding: 1rem;">{{ loop.index }}</td>
+                            <td style="padding: 1rem;">{{ grade.course.kode }}</td>
+                            <td style="padding: 1rem;">{{ grade.course.nama }}</td>
+                            <td style="padding: 1rem; text-align: center;">{{ grade.bobot }}</td>
+                            <td style="padding: 1rem; text-align: center;">{{ grade.grade }}</td>
+                            <td style="padding: 1rem; text-align: center;">{{ grade.nilai }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <div style="margin-top: 2rem; display: flex; justify-content: flex-end;">
+                <div style="width: 300px; padding: 1rem; border: 1px solid var(--border-light); border-radius: var(--radius-md);">
+                    <div class="flex justify-between mb-2">
+                        <span>Total SKS:</span>
+                        <strong id="total-sks-display">0</strong>
+                    </div>
+                    <div class="flex justify-between mb-2">
+                        <span>IPK Kumulatif:</span>
+                        <strong id="ipk-display">0.00</strong>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const rows = document.querySelectorAll('tbody tr');
+        let totalSks = 0;
+        let totalPoints = 0;
+
+        rows.forEach(row => {
+            const sks = parseFloat(row.cells[3].innerText);
+            const bobot = parseFloat(row.cells[5].innerText);
+            totalSks += sks;
+            totalPoints += (sks * bobot);
+        });
+
+        const ipk = totalSks > 0 ? (totalPoints / totalSks).toFixed(2) : "0.00";
+        document.getElementById('total-sks-display').innerText = totalSks;
+        document.getElementById('ipk-display').innerText = ipk;
+    });
+</script>
+
+<style>
+    @media print {
+        .sidebar, .topbar, .btn-modern {
+            display: none !important;
+        }
+        .main-layout {
+            margin-left: 0 !important;
+        }
+        .card-modern {
+            box-shadow: none !important;
+            border: none !important;
+        }
+    }
+</style>
+{% endblock %}

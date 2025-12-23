@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block title %}{{ post.title }} - Forum Diskusi{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Post Content -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">{{ post.title }}</h6>
+        </div>
+        <div class="card-body">
+            <p>{{ post.content }}</p>
+            <hr>
+            <small class="text-muted">
+                Diposting oleh: {{ post.student.nama }} | 
+                Mata Kuliah: {{ post.course.nama }} | 
+                Pada: {{ post.created_at.strftime('%d %b %Y %H:%M') }}
+            </small>
+        </div>
+    </div>
+
+    <!-- Replies -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Balasan</h6>
+        </div>
+        <div class="card-body">
+            {% for reply in replies %}
+                <div class="media mb-3">
+                    <div class="media-body">
+                        <h6 class="mt-0">{{ reply.student.nama }}</h6>
+                        {{ reply.content }}
+                        <small class="text-muted d-block">{{ reply.created_at.strftime('%d %b %Y %H:%M') }}</small>
+                    </div>
+                </div>
+            {% else %}
+                <p>Belum ada balasan.</p>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Reply Form -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Tulis Balasan</h6>
+        </div>
+        <div class="card-body">
+            <form action="{{ url_for('elearning.forum_post', post_id=post.id) }}" method="POST">
+                <div class="form-group">
+                    <textarea class="form-control" name="content" rows="4" required></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Kirim Balasan</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

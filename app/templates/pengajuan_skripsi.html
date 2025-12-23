@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+
+{% block title %}Pengajuan Skripsi - SIAKAD{% endblock %}
+{% block page_title %}Pengajuan Skripsi{% endblock %}
+
+{% block content %}
+<div class="animate-fade-in" style="max-width: 800px; margin: 0 auto;">
+    <div class="card-modern">
+        <div class="card-header">
+            <h3 class="flex items-center gap-2">
+                <i class="fas fa-book" style="color: var(--primary);"></i>
+                Formulir Pengajuan Judul Skripsi
+            </h3>
+        </div>
+        <div class="card-body">
+            <form action="{{ url_for('pengajuan.skripsi') }}" method="POST">
+                <div class="form-group">
+                    <label class="form-label">Judul Skripsi yang Diajukan</label>
+                    <input type="text" name="judul_skripsi" class="form-control" placeholder="Masukkan judul penelitian Anda" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Peminatan / Konsentrasi</label>
+                    <select name="peminatan" class="form-control" required>
+                        <option value="">Pilih Peminatan</option>
+                        <option value="software">Rekayasa Perangkat Lunak</option>
+                        <option value="network">Jaringan Komputer</option>
+                        <option value="data">Data Science</option>
+                        <option value="multimedia">Multimedia</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Abstrak Singkat</label>
+                    <textarea name="abstrak" class="form-control" rows="6" placeholder="Tuliskan gambaran umum, masalah, dan tujuan penelitian Anda..." required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Calon Dosen Pembimbing (Preferensi)</label>
+                    <input type="text" name="dosen_pref" class="form-control" placeholder="Nama dosen pembimbing yang diinginkan">
+                    <small style="color: var(--text-muted);">* Keputusan akhir ditentukan oleh Prodi</small>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Unggah Outline / Proposal (PDF)</label>
+                    <input type="file" name="file" class="form-control">
+                </div>
+
+                <div class="flex justify-end gap-3 mt-4">
+                    <button type="reset" class="btn-modern" style="background: var(--bg-main);">Reset</button>
+                    <button type="submit" class="btn-modern btn-primary">
+                        <i class="fas fa-paper-plane"></i> Ajukan Judul
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="card-modern" style="margin-top: 2rem;">
+        <div class="card-header">
+            <h3 class="flex items-center gap-2">
+                <i class="fas fa-check-circle" style="color: var(--success);"></i>
+                Syarat Pengajuan
+            </h3>
+        </div>
+        <div class="card-body">
+            <ul style="padding-left: 1.5rem; color: var(--text-muted);">
+                <li class="mb-2">Telah menempuh minimal 120 SKS.</li>
+                <li class="mb-2">Lulus Mata Kuliah Metode Penelitian (Min. C).</li>
+                <li class="mb-1">Tidak memiliki nilai E pada mata kuliah wajib.</li>
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}

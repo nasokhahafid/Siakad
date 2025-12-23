@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+
+{% block title %}Jadwal Kuliah - SIAKAD Modern{% endblock %}
+
+{% block page_title %}Jadwal Perkuliahan{% endblock %}
+
+{% block content %}
+<div class="animate-fade-in">
+    <!-- Schedule Info Header -->
+    <div class="card-modern mb-4">
+        <div class="card-body flex justify-between items-center py-4">
+            <div>
+                <h3 style="margin: 0; font-family: 'Outfit';">Jadwal Semester Ganjil</h3>
+                <p class="text-muted" style="margin: 4px 0 0;">Tahun Ajaran 2023/2024 • Genap</p>
+            </div>
+            <div class="flex gap-2">
+                <button class="btn-modern" style="border: 1px solid var(--border-light);"><i class="fas fa-calendar-alt"></i> Kalender</button>
+                <button class="btn-modern btn-primary"><i class="fas fa-download"></i> Cetak Jadwal</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Schedule Grid -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 1.5rem;">
+        {% set days = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'] %}
+        {% for day in days %}
+        <div class="card-modern">
+            <div class="card-header" style="background: var(--bg-main);">
+                <h4 style="margin: 0; font-size: 1rem; color: var(--primary);">
+                    <i class="fas fa-calendar-day" style="margin-right: 8px;"></i> {{ day }}
+                </h4>
+            </div>
+            <div class="card-body" style="padding: 0;">
+                <div style="display: flex; flex-direction: column;">
+                    {% set day_found = false %}
+                    {% for item in schedule %}
+                        {% if item.hari == day %}
+                        {% set day_found = true %}
+                        <div style="padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--border-light); transition: var(--transition); cursor: pointer;" class="schedule-item">
+                            <div class="flex justify-between items-start mb-2">
+                                <span style="font-size: 0.75rem; font-weight: 700; color: var(--primary); background: rgba(37, 99, 235, 0.08); padding: 2px 8px; border-radius: 4px;">{{ item.waktu_mulai }}-{{ item.waktu_selesai }}</span>
+                                <span style="font-size: 0.8rem; font-weight: 600; color: var(--text-muted);">{{ item.ruangan }}</span>
+                            </div>
+                            <h5 style="margin: 0; font-size: 0.95rem; line-height: 1.4;">{{ item.course.nama }}</h5>
+                            <div class="flex items-center gap-2 mt-2">
+                                <i class="fas fa-user-tie" style="font-size: 0.75rem; color: var(--text-muted);"></i>
+                                <span style="font-size: 0.8rem; color: var(--text-muted);">{{ item.course.dosen.nama if item.course.dosen else 'Dosen Pengampu' }}</span>
+                            </div>
+                        </div>
+                        {% endif %}
+                    {% endfor %}
+                    
+                    {% if not day_found %}
+                    <div style="padding: 2rem; text-align: center; color: var(--text-muted); font-size: 0.85rem;">
+                        <i class="fas fa-coffee" style="display: block; font-size: 1.5rem; margin-bottom: 0.5rem; opacity: 0.3;"></i>
+                        Tidak ada aktivitas kuliah
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<style>
+    .schedule-item:hover {
+        background-color: #fafafa;
+        padding-left: 1.75rem !important;
+    }
+    .schedule-item:hover h5 {
+        color: var(--primary);
+    }
+</style>
+{% endblock %}

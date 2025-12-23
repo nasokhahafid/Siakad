@@ -1,0 +1,230 @@
+{% extends "base.html" %}
+
+{% block title %}Status Pengajuan - SIAKAD Modern{% endblock %}
+
+{% block page_title %}Layanan Pengajuan{% endblock %}
+
+{% block content %}
+<div class="animate-fade-in">
+    <!-- Header with Quick Stats -->
+    <div class="stats-grid">
+        <div class="card-modern stat-card">
+            <div class="stat-icon" style="background: rgba(37, 99, 235, 0.1); color: var(--primary);">
+                <i class="fas fa-file-export"></i>
+            </div>
+            <div class="stat-info">
+                <span class="stat-value">{{ submissions|length }}</span>
+                <span class="stat-label">Total Tugas</span>
+            </div>
+        </div>
+        <div class="card-modern stat-card">
+            <div class="stat-icon" style="background: rgba(16, 185, 129, 0.1); color: var(--success);">
+                <i class="fas fa-envelope-open-text"></i>
+            </div>
+            <div class="stat-info">
+                <span class="stat-value">{{ letter_submissions|length }}</span>
+                <span class="stat-label">Pengajuan Surat</span>
+            </div>
+        </div>
+        <div class="card-modern stat-card">
+            <div class="stat-icon" style="background: rgba(245, 158, 11, 0.1); color: var(--warning);">
+                <i class="fas fa-clock"></i>
+            </div>
+            <div class="stat-info">
+                <span class="stat-value">{% set pending_count = 0 %}{% for s in submissions if s.status == 'pending' %}{% set pending_count = pending_count + 1 %}{% endfor %}{{ pending_count }}</span>
+                <span class="stat-label">Menunggu Review</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Actions Section -->
+    <div class="card-modern mb-4">
+        <div class="card-body flex gap-3">
+            <a href="{{ url_for('pengajuan.upload_tugas') }}" class="btn-modern btn-primary">
+                <i class="fas fa-plus"></i> Upload Tugas Baru
+            </a>
+            <a href="{{ url_for('pengajuan.ajukan_surat') }}" class="btn-modern" style="border: 1px solid var(--border-light);">
+                <i class="fas fa-paper-plane"></i> Ajukan Surat Keterangan
+            </a>
+        </div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+        <!-- Tasks Table -->
+        <div class="card-modern">
+            <div class="card-header">
+                <h4 style="margin: 0;"><i class="fas fa-tasks" style="margin-right: 10px; color: var(--primary);"></i> Riwayat Upload Tugas</h4>
+            </div>
+            <div class="card-body" style="padding: 0;">
+                <div style="overflow-x: auto;">
+                    <table style="width: 100%; border-collapse: collapse;">
+                        <thead>
+                            <tr style="background: var(--bg-main); border-bottom: 1px solid var(--border-light); text-align: left;">
+                                <th style="padding: 1rem 1.5rem; font-size: 0.8rem; text-transform: uppercase;">Mata Kuliah</th>
+                                <th style="padding: 1rem 1.5rem; font-size: 0.8rem; text-transform: uppercase;">Status</th>
+                                <th style="padding: 1rem 1.5rem; font-size: 0.8rem; text-transform: uppercase;">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for submission in submissions %}
+                            <tr style="border-bottom: 1px solid var(--border-light);">
+                                <td style="padding: 1.25rem 1.5rem;">
+                                    <span style="display: block; font-weight: 600; font-size: 0.9rem;">{{ submission.judul }}</span>
+                                    <small class="text-muted">{{ submission.course.nama }}</small>
+                                </td>
+                                <td style="padding: 1.25rem 1.5rem;">
+                                    {% if submission.status == 'pending' %}
+                                    <span style="background: rgba(245, 158, 11, 0.1); color: var(--warning); padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 700;">Pending</span>
+                                    {% elif submission.status == 'graded' or submission.status == 'approved' %}
+                                    <span style="background: rgba(16, 185, 129, 0.1); color: var(--success); padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 700;">Graded</span>
+                                    {% else %}
+                                    <span style="background: rgba(239, 68, 68, 0.1); color: var(--danger); padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 700;">{{ submission.status }}</span>
+                                    {% endif %}
+                                </td>
+                                <td style="padding: 1.25rem 1.5rem;">
+                                    <button class="btn-icon" style="color: var(--primary);"><i class="fas fa-eye"></i></button>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                            {% if not submissions %}
+                            <tr>
+                                <td colspan="3" style="padding: 3rem; text-align: center; color: var(--text-muted);">Belum ada riwayat upload tugas.</td>
+                            </tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Letters Table -->
+        <div class="card-modern">
+            <div class="card-header">
+                <h4 style="margin: 0;"><i class="fas fa-file-alt" style="margin-right: 10px; color: var(--success);"></i> Status Pengajuan Surat</h4>
+            </div>
+            <div class="card-body" style="padding: 0;">
+                <div style="overflow-x: auto;">
+                    <table style="width: 100%; border-collapse: collapse;">
+                        <thead>
+                            <tr style="background: var(--bg-main); border-bottom: 1px solid var(--border-light); text-align: left;">
+                                <th style="padding: 1rem 1.5rem; font-size: 0.8rem; text-transform: uppercase;">Jenis Surat</th>
+                                <th style="padding: 1rem 1.5rem; font-size: 0.8rem; text-transform: uppercase;">Status</th>
+                                <th style="padding: 1rem 1.5rem; font-size: 0.8rem; text-transform: uppercase;">Tgl</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for letter in letter_submissions %}
+                            <tr style="border-bottom: 1px solid var(--border-light);">
+                                <td style="padding: 1.25rem 1.5rem;">
+                                    <span style="display: block; font-weight: 600; font-size: 0.9rem;">{{ letter.title }}</span>
+                                    <small class="text-muted">{{ letter.letter_type | capitalize }}</small>
+                                </td>
+                                <td style="padding: 1.25rem 1.5rem;">
+                                    {% if letter.status == 'pending' %}
+                                    <span style="background: rgba(245, 158, 11, 0.1); color: var(--warning); padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 700;">Pending</span>
+                                    {% elif letter.status == 'approved' %}
+                                    <span style="background: rgba(16, 185, 129, 0.1); color: var(--success); padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 700;">Approved</span>
+                                    {% else %}
+                                    <span style="background: rgba(239, 68, 68, 0.1); color: var(--danger); padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 700;">{{ letter.status }}</span>
+                                    {% endif %}
+                                </td>
+                                <td style="padding: 1.25rem 1.5rem;">
+                                    <small class="text-muted">{{ letter.submitted_at.strftime('%d/%m') }}</small>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                            {% if not letter_submissions %}
+                            <tr>
+                                <td colspan="3" style="padding: 3rem; text-align: center; color: var(--text-muted);">Belum ada riwayat pengajuan surat.</td>
+                            </tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 1.5rem;">
+        <!-- Internships Table -->
+        <div class="card-modern">
+            <div class="card-header">
+                <h4 style="margin: 0;"><i class="fas fa-briefcase" style="margin-right: 10px; color: var(--primary);"></i> Pengajuan Magang</h4>
+            </div>
+            <div class="card-body" style="padding: 0;">
+                <div style="overflow-x: auto;">
+                    <table style="width: 100%; border-collapse: collapse;">
+                        <thead>
+                            <tr style="background: var(--bg-main); border-bottom: 1px solid var(--border-light); text-align: left;">
+                                <th style="padding: 1rem 1.5rem; font-size: 0.8rem; text-transform: uppercase;">Perusahaan</th>
+                                <th style="padding: 1rem 1.5rem; font-size: 0.8rem; text-transform: uppercase;">Status</th>
+                                <th style="padding: 1rem 1.5rem; font-size: 0.8rem; text-transform: uppercase;">Tgl</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for intern in internships %}
+                            <tr style="border-bottom: 1px solid var(--border-light);">
+                                <td style="padding: 1.25rem 1.5rem;">
+                                    <span style="display: block; font-weight: 600; font-size: 0.9rem;">{{ intern.perusahaan }}</span>
+                                    <small class="text-muted">{{ intern.posisi }}</small>
+                                </td>
+                                <td style="padding: 1.25rem 1.5rem;">
+                                    <span class="badge-status {{ intern.status }}">{{ intern.status | capitalize }}</span>
+                                </td>
+                                <td style="padding: 1.25rem 1.5rem;">
+                                    <small class="text-muted">{{ intern.submitted_at.strftime('%d/%m') }}</small>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                            {% if not internships %}
+                            <tr>
+                                <td colspan="3" style="padding: 3rem; text-align: center; color: var(--text-muted);">Belum ada pengajuan magang.</td>
+                            </tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Theses Table -->
+        <div class="card-modern">
+            <div class="card-header">
+                <h4 style="margin: 0;"><i class="fas fa-book" style="margin-right: 10px; color: var(--primary);"></i> Pengajuan Skripsi</h4>
+            </div>
+            <div class="card-body" style="padding: 0;">
+                <div style="overflow-x: auto;">
+                    <table style="width: 100%; border-collapse: collapse;">
+                        <thead>
+                            <tr style="background: var(--bg-main); border-bottom: 1px solid var(--border-light); text-align: left;">
+                                <th style="padding: 1rem 1.5rem; font-size: 0.8rem; text-transform: uppercase;">Judul</th>
+                                <th style="padding: 1rem 1.5rem; font-size: 0.8rem; text-transform: uppercase;">Status</th>
+                                <th style="padding: 1rem 1.5rem; font-size: 0.8rem; text-transform: uppercase;">Tgl</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for thesis in theses %}
+                            <tr style="border-bottom: 1px solid var(--border-light);">
+                                <td style="padding: 1.25rem 1.5rem;">
+                                    <span style="display: block; font-weight: 600; font-size: 0.9rem; max-width: 250px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ thesis.judul_skripsi }}</span>
+                                    <small class="text-muted">{{ thesis.peminatan | capitalize }}</small>
+                                </td>
+                                <td style="padding: 1.25rem 1.5rem;">
+                                    <span class="badge-status {{ thesis.status }}">{{ thesis.status | capitalize }}</span>
+                                </td>
+                                <td style="padding: 1.25rem 1.5rem;">
+                                    <small class="text-muted">{{ thesis.submitted_at.strftime('%d/%m') }}</small>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                            {% if not theses %}
+                            <tr>
+                                <td colspan="3" style="padding: 3rem; text-align: center; color: var(--text-muted);">Belum ada pengajuan skripsi.</td>
+                            </tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

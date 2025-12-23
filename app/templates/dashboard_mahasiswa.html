@@ -1,0 +1,141 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard Mahasiswa - SIAKAD{% endblock %}
+
+{% block page_title %}Dashboard Mahasiswa{% endblock %}
+
+{% block content %}
+<div class="animate-fade-in">
+    <!-- Premium Profile Hero Section -->
+    <div class="card-modern mb-4" style="overflow: visible; border: none; background: transparent; box-shadow: none;">
+        <div style="position: relative;">
+            <div class="profile-banner" style="border-radius: var(--radius-lg); height: 200px; background: linear-gradient(135deg, #1e293b 0%, #334155 100%); overflow: hidden; position: relative;">
+                <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0.1; background-image: radial-gradient(circle at 2px 2px, white 1px, transparent 0); background-size: 24px 24px;"></div>
+                <div style="position: absolute; right: 2rem; bottom: 1rem; color: rgba(255,255,255,0.2); font-size: 4rem;">
+                    <i class="fas fa-university"></i>
+                </div>
+            </div>
+            
+            <div style="display: flex; align-items: flex-end; padding: 0 2.5rem; margin-top: -60px; position: relative; z-index: 10; gap: 2rem;">
+                <div style="width: 140px; height: 140px; border-radius: 50%; background: white; padding: 5px; box-shadow: var(--shadow-lg);">
+                    <div style="width: 100%; height: 100%; border-radius: 50%; background: var(--bg-main); display: flex; align-items: center; justify-content: center; font-size: 4rem; color: var(--primary);">
+                        <i class="fas fa-user-graduate"></i>
+                    </div>
+                </div>
+                
+                <div style="padding-bottom: 1rem; flex: 1; display: flex; justify-content: space-between; align-items: flex-end;">
+                    <div>
+                        <h1 style="font-size: 2rem; margin-bottom: 0.25rem; font-family: 'Outfit'; color: #1e293b;">{{ current_user.nama }}</h1>
+                        <p class="text-muted" style="margin: 0; font-weight: 500;">
+                            <i class="fas fa-id-card" style="margin-right: 8px;"></i> {{ current_user.nim }} • <i class="fas fa-graduation-cap" style="margin-left: 8px; margin-right: 8px;"></i> {{ current_user.program_studi }}
+                        </p>
+                    </div>
+                    <div class="flex gap-2">
+                        <a href="{{ url_for('akademik.profil') }}" class="btn-modern btn-primary" style="box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);">
+                            <i class="fas fa-user-edit"></i> Edit Profil
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Insight Tiles -->
+    <div style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 1.5rem; margin-bottom: 2rem; margin-top: 1rem;">
+        <div class="card-modern" style="background: white;">
+            <div class="card-body" style="padding: 1.5rem 2rem;">
+                <h4 style="margin-bottom: 1.5rem; font-family: 'Outfit';">Status Akademik</h4>
+                <div style="display: flex; justify-content: space-between;">
+                    <div style="text-align: center;">
+                        <span class="text-muted" style="font-size: 0.75rem; display: block; font-weight: 700; text-transform: uppercase; margin-bottom: 0.5rem;">IPK Kumulatif</span>
+                        <div style="font-size: 2.25rem; font-weight: 800; color: var(--primary);">{{ ipk }}</div>
+                        <span style="font-size: 0.75rem; color: var(--success); font-weight: 700;"><i class="fas fa-arrow-up"></i> 0.05</span>
+                    </div>
+                    <div style="width: 1px; background: var(--border-light);"></div>
+                    <div style="text-align: center;">
+                        <span class="text-muted" style="font-size: 0.75rem; display: block; font-weight: 700; text-transform: uppercase; margin-bottom: 0.5rem;">Total SKS Lulus</span>
+                        <div style="font-size: 2.25rem; font-weight: 800; color: #1e293b;">{{ total_sks }}</div>
+                        <span style="font-size: 0.75rem; color: var(--text-muted);">Target: 144</span>
+                    </div>
+                    <div style="width: 1px; background: var(--border-light);"></div>
+                    <div style="text-align: center;">
+                        <span class="text-muted" style="font-size: 0.75rem; display: block; font-weight: 700; text-transform: uppercase; margin-bottom: 0.5rem;">Semester Aktif</span>
+                        <div style="font-size: 2.25rem; font-weight: 800; color: #1e293b;">5</div>
+                        <span style="font-size: 0.75rem; color: var(--text-muted);">Ganjil 23/24</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card-modern" style="background: linear-gradient(135deg, #10b981, #059669); color: white; border: none;">
+            <div class="card-body" style="display: flex; align-items: center; justify-content: space-between;">
+                <div>
+                    <h4 style="color: white; margin-bottom: 0.5rem;">Kehadiran</h4>
+                    <div style="font-size: 2.5rem; font-weight: 800;">{{ presence_percent }}%</div>
+                    <p style="margin: 0; opacity: 0.8; font-size: 0.85rem;">{{ 'Sangat Bagus!' if presence_percent > 80 else 'Tingkatkan lagi.' if presence_percent > 50 else 'Perhatian extra!' }}</p>
+                </div>
+                <div style="font-size: 4rem; opacity: 0.2;">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 1.5rem;">
+        <!-- Course Progress -->
+        <div class="card-modern">
+            <div class="card-header">
+                <h4 style="margin: 0;"><i class="fas fa-book-reader" style="margin-right: 10px; color: var(--primary);"></i> Kuliah Hari Ini</h4>
+                <a href="{{ url_for('akademik.jadwal') }}" style="font-size: 0.875rem; color: var(--primary); font-weight: 600;">Lihat Jadwal</a>
+            </div>
+            <div class="card-body">
+                <div class="flex flex-direction-column gap-4">
+                    {% for sched in today_schedule %}
+                    <div class="flex items-center justify-between p-4" style="background: var(--bg-main); border-radius: var(--radius-md);">
+                        <div class="flex items-center gap-4">
+                            <div style="width: 50px; height: 50px; background: white; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: var(--primary); box-shadow: var(--shadow-sm);">
+                                <i class="fas fa-book"></i>
+                            </div>
+                            <div>
+                                <span style="display: block; font-weight: 700;">{{ sched.course.nama }}</span>
+                                <small class="text-muted">{{ sched.ruangan }} • {{ sched.waktu_mulai }} - {{ sched.waktu_selesai }}</small>
+                            </div>
+                        </div>
+                        <span style="background: rgba(16, 185, 129, 0.1); color: var(--success); padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 700;">Masuk</span>
+                    </div>
+                    {% else %}
+                    <div style="text-align: center; padding: 2rem; color: var(--text-muted);">
+                        <i class="fas fa-coffee" style="font-size: 2rem; display: block; margin-bottom: 1rem; opacity: 0.3;"></i>
+                        Tidak ada kuliah hari ini
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Activities -->
+        <div class="card-modern">
+            <div class="card-header">
+                <h4 style="margin: 0;"><i class="fas fa-history" style="margin-right: 10px; color: var(--primary);"></i> Aktivitas</h4>
+            </div>
+            <div class="card-body" style="padding: 0;">
+                {% for activity in recent_activities %}
+                <div style="padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--border-light); display: flex; gap: 1rem;">
+                    <div style="width: 36px; height: 36px; border-radius: 10px; background: var(--bg-main); color: var(--primary); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                        <i class="fas fa-{{ 'file-upload' if activity.type == 'upload' else 'video' if activity.type == 'video' else 'comment-alt' }}"></i>
+                    </div>
+                    <div>
+                        <p style="margin: 0; font-size: 0.875rem; font-weight: 600; color: #1e293b;">{{ activity.description }}</p>
+                        <small class="text-muted">{{ activity.time }}</small>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .flex-direction-column { flex-direction: column; }
+</style>
+{% endblock %}
