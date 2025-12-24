@@ -1,11 +1,10 @@
-# SIAKAD - Integrated SIPA & E-Learning System
+# SIAKAD 
 
-SIAKAD HUB Modern adalah platform sistem informasi akademik terintegrasi yang menggabungkan fungsi administrasi akademik (KRS, KHS, Penjadwalan) dengan platform pembelajaran digital (E-Learning) yang responsif dan modern.
+SIAKAD adalah platform sistem informasi akademik terintegrasi yang menggabungkan fungsi administrasi akademik (KRS, KHS, Penjadwalan) dengan platform pembelajaran digital (E-Learning) yang responsif dan modern.
 
 ## 🌟 Fitur Utama
 
 - **Portal Mahasiswa**: Manajemen KRS, Kartu Hasil Studi (KHS), Transkrip Nilai, Jadwal Kuliah Real-time, dan Profil Akademik.
-- **E-Learning**: Akses materi (PDF/PPT), video pembelajaran, progres belajar, dan forum diskusi per mata kuliah.
 - **Portal Dosen**: Manajemen konten mata kuliah, penilaian tugas mahasiswa, dan pemantauan aktivitas akademik.
 - **Portal Admin**: Manajemen user (Mahasiswa/Dosen), pengelolaan mata kuliah global, dan konfigurasi sistem.
 - **Layanan Mandiri**: Pengajuan surat keterangan akademik, pendaftaran magang (MBKM), dan pengajuan judul skripsi secara online.
@@ -47,7 +46,3 @@ Gunakan akun berikut untuk menguji fitur berdasarkan level akses user:
 | **Administrator** | `admin`        | `password` | Administrator    |
 | **Dosen**         | `dosen1`       | `password` | Dr. Budi Santoso |
 | **Mahasiswa**     | `mahasiswa1`   | `password` | Ahmad Fauzi      |
-
----
-
-Developed with ❤️ for Academic Excellence.
